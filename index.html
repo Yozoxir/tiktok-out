@@ -11,7 +11,6 @@
   --fg:#ffffff;
   --muted:rgba(255,255,255,.62);
 
-  /* position du menu TikTok */
   --targetTop: calc(10px + env(safe-area-inset-top));
   --targetRight: calc(10px + env(safe-area-inset-right));
 }
@@ -28,7 +27,6 @@ body{
   overflow:hidden;
 }
 
-/* Spotlight discret vers le coin */
 .spotlight{
   position:fixed; inset:0;
   pointer-events:none;
@@ -43,18 +41,16 @@ body{
   50%{opacity:1}
 }
 
-/* ===== GROUPE FLÈCHES (3) ===== */
+/* ===== FLÈCHES ===== */
 .chevrons{
   position:fixed;
   top: calc(var(--targetTop) + 18px);
-  right: calc(var(--targetRight) - 8px); /* +5px vers la droite (était -3px) */
+  right: calc(var(--targetRight) - 13px); /* +5px encore vers la droite */
   width:72px;
   height:210px;
   pointer-events:none;
-  filter: drop-shadow(0 10px 22px rgba(0,0,0,.65));
 }
 
-/* Une flèche = corps + pointe */
 .chev{
   position:absolute;
   left:50%;
@@ -66,7 +62,6 @@ body{
   animation: upDown 1.35s ease-in-out infinite alternate;
 }
 
-/* Pointe */
 .chev::after{
   content:"";
   position:absolute;
@@ -78,18 +73,16 @@ body{
   border-bottom:18px solid #fff;
 }
 
-/* 3 flèches empilées */
 .chev:nth-child(1){ top:128px; animation-delay:0s; }
 .chev:nth-child(2){ top:78px;  animation-delay:.12s; }
 .chev:nth-child(3){ top:28px;  animation-delay:.24s; }
 
-/* Mouvement haut ↔ bas continu */
 @keyframes upDown{
   from{ transform:translateX(-50%) translateY(0); }
   to  { transform:translateX(-50%) translateY(72px); }
 }
 
-/* ===== TEXTE CENTRÉ ===== */
+/* ===== TEXTE ===== */
 .center{
   position:fixed;
   inset:0;
@@ -142,7 +135,7 @@ h1{
   text-decoration:underline;
 }
 
-/* ===== BOUTON COPIER (bas centré) ===== */
+/* ===== BOUTON ===== */
 .copyWrap{
   position:fixed;
   left:50%;
@@ -163,7 +156,6 @@ h1{
   cursor:pointer;
   background:#fff;
   color:#000;
-  box-shadow: 0 10px 28px rgba(0,0,0,.45);
 }
 
 .toast{
@@ -192,14 +184,12 @@ h1{
 <body>
 <div class="spotlight"></div>
 
-<!-- 3 flèches -->
 <div class="chevrons">
   <div class="chev"></div>
   <div class="chev"></div>
   <div class="chev"></div>
 </div>
 
-<!-- Texte -->
 <div class="center">
   <div class="card">
     <h1>Ouvre dans le navigateur</h1>
@@ -216,13 +206,11 @@ h1{
   </div>
 </div>
 
-<!-- Copier lien -->
 <div class="copyWrap">
   <div class="toast" id="toast">Lien copié ✅</div>
   <button class="btn" id="copyBtn">Copier le lien</button>
 </div>
 
-<!-- Footer -->
 <div class="footer">
   Safari ou Chrome<br>
   Un site fais par antoressel
@@ -231,7 +219,6 @@ h1{
 <script>
 const DEST = "https://antoressel.com";
 
-/* Détection TikTok IN-APP */
 const ua = navigator.userAgent.toLowerCase();
 const isTikTok =
   ua.includes("tiktok") ||
@@ -240,12 +227,10 @@ const isTikTok =
   ua.includes("aweme") ||
   ua.includes("ttwebview");
 
-/* Redirection uniquement hors TikTok */
 if(!isTikTok){
   window.location.replace(DEST);
 }
 
-/* Copier lien */
 async function copyText(text){
   try{
     if(navigator.clipboard){
