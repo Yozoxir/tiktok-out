@@ -1,1 +1,5 @@
-{}
+{
+  "rewrites": [
+    { "source": "/go", "destination": "/api/go" }
+  ]
+}
