@@ -12,7 +12,7 @@
   --muted:rgba(255,255,255,.70);
   --muted2:rgba(255,255,255,.55);
 
-  /* Position menu TikTok (coin haut droit) */
+  /* Coin haut droit (menu TikTok) */
   --targetTop: calc(10px + env(safe-area-inset-top));
   --targetRight: calc(10px + env(safe-area-inset-right));
 }
@@ -30,112 +30,90 @@ body{
 .bgGlow{
   position:fixed; inset:-40%;
   background:
-    radial-gradient(circle at 90% 10%, rgba(255,255,255,.12), transparent 42%),
-    radial-gradient(circle at 50% 70%, rgba(255,255,255,.06), transparent 55%);
+    radial-gradient(circle at 90% 10%, rgba(255,255,255,.10), transparent 45%),
+    radial-gradient(circle at 50% 70%, rgba(255,255,255,.05), transparent 55%);
   pointer-events:none;
 }
 
-/* Focus coin haut droit */
+/* Spotlight léger vers le coin haut droit */
 .spotlight{
   position:fixed; inset:0;
   pointer-events:none;
   background:
-    radial-gradient(circle at calc(100% - 32px) calc(0% + 48px),
-      rgba(255,255,255,.20),
-      rgba(0,0,0,0) 58%);
-  animation: spot 1.35s ease-in-out infinite;
+    radial-gradient(circle at calc(100% - 28px) calc(0% + 44px),
+      rgba(255,255,255,.16),
+      rgba(0,0,0,0) 60%);
+  animation: spot 1.6s ease-in-out infinite;
   mix-blend-mode: screen;
-  opacity:.95;
+  opacity:.9;
 }
 @keyframes spot{
-  0%,100%{opacity:.65}
+  0%,100%{opacity:.55}
   50%{opacity:1}
 }
 
-/* Cadre subtil autour du coin (aide l’œil) */
-.cornerFrame{
-  position:fixed;
-  top: var(--targetTop);
-  right: var(--targetRight);
-  width:88px;
-  height:66px;
-  border-radius:18px;
-  border:1px solid rgba(255,255,255,.12);
-  background:rgba(255,255,255,.03);
-  pointer-events:none;
-  animation: frame 2.2s ease-in-out infinite;
-}
-@keyframes frame{
-  0%,88%,100%{transform:translate(0,0); opacity:.9}
-  90%{transform:translate(-2px,2px); opacity:1}
-  92%{transform:translate(2px,-2px); opacity:1}
-  94%{transform:translate(-2px,1px); opacity:1}
-  96%{transform:translate(1px,-1px); opacity:1}
-}
-
-/* ===== CHEVRONS (flèches) ===== */
+/* ===== CHEVRONS (plus petits + plus à droite + animation nouvelle) ===== */
 .chevrons{
   position:fixed;
 
-  /* PLUS EN HAUT qu’avant */
-  top: calc(var(--targetTop) + 36px);
-  right: calc(var(--targetRight) - 10px);
+  /* plus haut */
+  top: calc(var(--targetTop) + 30px);
 
-  width:70px;
-  height:160px;
+  /* plus à droite (valeur plus négative = plus à droite) */
+  right: calc(var(--targetRight) - 20px);
+
+  width:46px;
+  height:120px;
   pointer-events:none;
-  filter: drop-shadow(0 14px 28px rgba(0,0,0,.65));
+  filter: drop-shadow(0 12px 22px rgba(0,0,0,.65));
 }
 
-/* Chevron = forme ^ (orienté vers le haut) */
 .chev{
   position:absolute;
   left:50%;
-  width:30px;
-  height:30px;
 
-  /* VERS LE HAUT */
+  /* plus petit */
+  width:18px;
+  height:18px;
+
+  /* orientation vers le haut */
   transform: translateX(-50%) rotate(-45deg);
 
-  border-top: 5px solid #fff;
-  border-right: 5px solid #fff;
+  border-top: 3px solid #fff;
+  border-right: 3px solid #fff;
 
   opacity:0;
   will-change: transform, opacity, filter;
-  animation: popUp 1.05s cubic-bezier(.16,.84,.24,1) infinite;
+  animation: flowUp 1.05s ease-in-out infinite;
 }
 
-/* Empilement des 3 chevrons (comme ^^^) */
-.chev:nth-child(1){ top:106px; animation-delay:0s; }
-.chev:nth-child(2){ top:66px;  animation-delay:.12s; }
-.chev:nth-child(3){ top:26px;  animation-delay:.24s; }
+/* 3 chevrons empilés, décalés */
+.chev:nth-child(1){ top:76px; animation-delay:0s; }
+.chev:nth-child(2){ top:46px; animation-delay:.14s; }
+.chev:nth-child(3){ top:16px; animation-delay:.28s; }
 
-/* NOUVELLE ANIMATION :
-   - “pop” (scale) + montée vers le haut
-   - petite lueur au pic
+/* NOUVELLE ANIMATION “flow” :
+   - ils apparaissent doucement
+   - glissent vers le haut
+   - disparaissent (sans pop/zoom)
 */
-@keyframes popUp{
+@keyframes flowUp{
   0%{
-    transform:translateX(-50%) rotate(-45deg) translateY(22px) scale(.75);
+    transform: translateX(-50%) rotate(-45deg) translateY(14px);
     opacity:0;
-    filter:blur(.6px);
+    filter: blur(.7px);
   }
-  18%{
+  22%{
     opacity:1;
+    filter: blur(0px);
   }
-  45%{
-    transform:translateX(-50%) rotate(-45deg) translateY(0px) scale(1.08);
-    opacity:1;
-    filter:blur(0px) drop-shadow(0 0 10px rgba(255,255,255,.30));
-  }
-  75%{
-    transform:translateX(-50%) rotate(-45deg) translateY(-14px) scale(1.02);
+  65%{
     opacity:.85;
   }
   100%{
-    transform:translateX(-50%) rotate(-45deg) translateY(-30px) scale(1.00);
+    transform: translateX(-50%) rotate(-45deg) translateY(-22px);
     opacity:0;
-    filter:blur(1px);
+    filter: blur(1px);
   }
 }
 
@@ -144,11 +122,11 @@ body{
   position:fixed;
   inset:0;
   display:flex;
-  align-items:center;   /* centre vertical */
+  align-items:center;
   justify-content:center;
   text-align:center;
   padding:0 18px;
-  pointer-events:none; /* laisse cliquer le bouton */
+  pointer-events:none;
 }
 
 .card{
@@ -238,7 +216,7 @@ h1{
   display:none;
 }
 
-/* Footer optionnel (tu peux supprimer si tu veux) */
+/* Footer bas centré */
 .footer{
   position:fixed;
   bottom:18px;
@@ -257,15 +235,14 @@ h1{
   <div class="bgGlow"></div>
   <div class="spotlight"></div>
 
-  <div class="cornerFrame" aria-hidden="true"></div>
-
+  <!-- Flèches -->
   <div class="chevrons" aria-hidden="true">
     <div class="chev"></div>
     <div class="chev"></div>
     <div class="chev"></div>
   </div>
 
-  <!-- TEXTE AU MILIEU -->
+  <!-- Texte au milieu -->
   <div class="center">
     <div class="card">
       <h1>Ouvre dans le navigateur</h1>
@@ -286,7 +263,7 @@ h1{
     </div>
   </div>
 
-  <!-- BOUTON COPIER EN BAS À DROITE -->
+  <!-- Copier lien bas droite -->
   <div class="copyWrap">
     <div class="toast" id="toast">Lien copié ✅</div>
     <button class="btn" id="copyBtn" type="button">Copier le lien</button>
@@ -295,7 +272,6 @@ h1{
   <div class="footer">Safari ou Chrome</div>
 
 <script>
-  // 🔧 Mets ton lien final ici
   const DEST = "https://antoressel.com";
 
   async function copyText(text){
@@ -334,8 +310,6 @@ h1{
     const ok = await copyText(DEST);
     showToast(ok ? "Lien copié ✅" : "Copie impossible ❌");
   });
-
-  // ✅ Aucune redirection volontaire (page guide uniquement)
 </script>
 </body>
 </html>
