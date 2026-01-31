@@ -12,7 +12,7 @@
   --muted:rgba(255,255,255,.70);
   --muted2:rgba(255,255,255,.55);
 
-  /* Position (menu TikTok en haut à droite) */
+  /* Position menu TikTok (coin haut droit) */
   --targetTop: calc(10px + env(safe-area-inset-top));
   --targetRight: calc(10px + env(safe-area-inset-right));
 }
@@ -20,14 +20,13 @@
 html,body{height:100%}
 body{
   margin:0;
-  background: var(--bg);
-  color: var(--fg);
-  font-family: system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  background:var(--bg);
+  color:var(--fg);
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
   overflow:hidden;
-  text-align:center;
 }
 
-/* Glow premium discret + focus coin haut droit */
+/* Glow premium discret */
 .bgGlow{
   position:fixed; inset:-40%;
   background:
@@ -36,6 +35,7 @@ body{
   pointer-events:none;
 }
 
+/* Focus coin haut droit */
 .spotlight{
   position:fixed; inset:0;
   pointer-events:none;
@@ -52,60 +52,7 @@ body{
   50%{opacity:1}
 }
 
-/* ===== CHEVRONS (flèches) ===== */
-.chevrons{
-  position:fixed;
-  top: calc(var(--targetTop) + 62px);
-  right: calc(var(--targetRight) - 10px); /* plus à droite */
-  width:64px;
-  height:160px;
-  pointer-events:none;
-  filter: drop-shadow(0 14px 28px rgba(0,0,0,.65));
-}
-
-/* Chaque chevron = “V” vers le haut (deux traits) */
-.chev{
-  position:absolute;
-  left:50%;
-  width:30px;
-  height:30px;
-
-  /* ORIENTATION VERS LE HAUT */
-  transform: translateX(-50%) rotate(-45deg);
-
-  border-top: 5px solid #fff;
-  border-right: 5px solid #fff;
-
-  opacity:0;
-  animation: rise 1.15s cubic-bezier(.2,.8,.2,1) infinite;
-  will-change: transform, opacity;
-}
-
-/* 3 chevrons décalés (effet “^^^”) */
-.chev:nth-child(1){ top:108px; animation-delay:0s;   opacity:.0; }
-.chev:nth-child(2){ top:70px;  animation-delay:.12s; opacity:.0; }
-.chev:nth-child(3){ top:32px;  animation-delay:.24s; opacity:.0; }
-
-/* Animation plus “pro” : apparition -> montée -> disparition */
-@keyframes rise{
-  0%{
-    transform: translateX(-50%) rotate(-45deg) translateY(20px) scale(.96);
-    opacity:0;
-    filter: blur(.2px);
-  }
-  22%{ opacity:1; }
-  60%{
-    transform: translateX(-50%) rotate(-45deg) translateY(-8px) scale(1.02);
-    opacity:.95;
-  }
-  100%{
-    transform: translateX(-50%) rotate(-45deg) translateY(-26px) scale(1.03);
-    opacity:0;
-    filter: blur(.6px);
-  }
-}
-
-/* Petit “cadre” subtil autour du coin (optionnel mais aide l’œil) */
+/* Cadre subtil autour du coin (aide l’œil) */
 .cornerFrame{
   position:fixed;
   top: var(--targetTop);
@@ -114,7 +61,7 @@ body{
   height:66px;
   border-radius:18px;
   border:1px solid rgba(255,255,255,.12);
-  background: rgba(255,255,255,.03);
+  background:rgba(255,255,255,.03);
   pointer-events:none;
   animation: frame 2.2s ease-in-out infinite;
 }
@@ -126,27 +73,101 @@ body{
   96%{transform:translate(1px,-1px); opacity:1}
 }
 
-/* ===== CONTENU TEXTE + BOUTON ===== */
-.wrap{
+/* ===== CHEVRONS (flèches) ===== */
+.chevrons{
+  position:fixed;
+
+  /* PLUS EN HAUT qu’avant */
+  top: calc(var(--targetTop) + 36px);
+  right: calc(var(--targetRight) - 10px);
+
+  width:70px;
+  height:160px;
+  pointer-events:none;
+  filter: drop-shadow(0 14px 28px rgba(0,0,0,.65));
+}
+
+/* Chevron = forme ^ (orienté vers le haut) */
+.chev{
   position:absolute;
-  left:0; right:0;
-  bottom: 92px;
+  left:50%;
+  width:30px;
+  height:30px;
+
+  /* VERS LE HAUT */
+  transform: translateX(-50%) rotate(-45deg);
+
+  border-top: 5px solid #fff;
+  border-right: 5px solid #fff;
+
+  opacity:0;
+  will-change: transform, opacity, filter;
+  animation: popUp 1.05s cubic-bezier(.16,.84,.24,1) infinite;
+}
+
+/* Empilement des 3 chevrons (comme ^^^) */
+.chev:nth-child(1){ top:106px; animation-delay:0s; }
+.chev:nth-child(2){ top:66px;  animation-delay:.12s; }
+.chev:nth-child(3){ top:26px;  animation-delay:.24s; }
+
+/* NOUVELLE ANIMATION :
+   - “pop” (scale) + montée vers le haut
+   - petite lueur au pic
+*/
+@keyframes popUp{
+  0%{
+    transform:translateX(-50%) rotate(-45deg) translateY(22px) scale(.75);
+    opacity:0;
+    filter:blur(.6px);
+  }
+  18%{
+    opacity:1;
+  }
+  45%{
+    transform:translateX(-50%) rotate(-45deg) translateY(0px) scale(1.08);
+    opacity:1;
+    filter:blur(0px) drop-shadow(0 0 10px rgba(255,255,255,.30));
+  }
+  75%{
+    transform:translateX(-50%) rotate(-45deg) translateY(-14px) scale(1.02);
+    opacity:.85;
+  }
+  100%{
+    transform:translateX(-50%) rotate(-45deg) translateY(-30px) scale(1.00);
+    opacity:0;
+    filter:blur(1px);
+  }
+}
+
+/* ===== TEXTE AU MILIEU ===== */
+.center{
+  position:fixed;
+  inset:0;
+  display:flex;
+  align-items:center;   /* centre vertical */
+  justify-content:center;
+  text-align:center;
   padding:0 18px;
+  pointer-events:none; /* laisse cliquer le bouton */
+}
+
+.card{
+  width:min(560px, 92vw);
 }
 
 h1{
-  margin:0 0 22px;
-  font-size:26px;
+  margin:0 0 18px;
+  font-size:28px;
   font-weight:900;
   letter-spacing:.2px;
-  line-height:1.15;
+  line-height:1.1;
 }
 
 .steps{
   display:grid;
   gap:14px;
+  margin:0 auto;
   max-width:520px;
-  margin:0 auto 18px;
 }
 
 .step{
@@ -171,17 +192,32 @@ h1{
 .action{
   font-weight:900;
   text-decoration:underline;
-  text-underline-offset: 4px;
+  text-underline-offset:4px;
 }
 
-/* Bouton copier */
+.sub{
+  margin-top:14px;
+  font-size:12px;
+  color:var(--muted2);
+}
+
+/* ===== BOUTON COPIER EN BAS À DROITE ===== */
+.copyWrap{
+  position:fixed;
+  right: calc(14px + env(safe-area-inset-right));
+  bottom: calc(14px + env(safe-area-inset-bottom));
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:10px;
+  z-index:5;
+}
+
 .btn{
-  display:inline-block;
   border:0;
   border-radius:14px;
   padding:14px 16px;
-  min-width: 260px;
-  font-size:16px;
+  font-size:15px;
   font-weight:900;
   cursor:pointer;
   background:#fff;
@@ -190,18 +226,7 @@ h1{
 }
 .btn:active{ transform: translateY(1px); }
 
-.sub{
-  margin-top:10px;
-  font-size:12px;
-  color: var(--muted2);
-}
-
-/* Toast copie */
 .toast{
-  position:fixed;
-  left:50%;
-  transform:translateX(-50%);
-  bottom: calc(54px + env(safe-area-inset-bottom));
   background: rgba(255,255,255,.10);
   border: 1px solid rgba(255,255,255,.16);
   padding:10px 12px;
@@ -213,17 +238,17 @@ h1{
   display:none;
 }
 
-/* Footer bas centré */
+/* Footer optionnel (tu peux supprimer si tu veux) */
 .footer{
   position:fixed;
   bottom:18px;
   left:50%;
   transform:translateX(-50%);
-  width:auto;
-  text-align:center;
   font-size:12px;
   color:var(--muted);
   letter-spacing:.2px;
+  pointer-events:none;
+  opacity:.9;
 }
 </style>
 </head>
@@ -240,26 +265,32 @@ h1{
     <div class="chev"></div>
   </div>
 
-  <div class="wrap">
-    <h1>Ouvre dans le navigateur</h1>
+  <!-- TEXTE AU MILIEU -->
+  <div class="center">
+    <div class="card">
+      <h1>Ouvre dans le navigateur</h1>
 
-    <div class="steps">
-      <div class="step">
-        <div class="num">1</div>
-        <div>Clique sur <b>…</b> en haut à droite</div>
+      <div class="steps">
+        <div class="step">
+          <div class="num">1</div>
+          <div>Clique sur <b>…</b> en haut à droite</div>
+        </div>
+
+        <div class="step">
+          <div class="num">2</div>
+          <div>Puis <span class="action">Ouvrir dans le navigateur</span></div>
+        </div>
       </div>
 
-      <div class="step">
-        <div class="num">2</div>
-        <div>Puis <span class="action">Ouvrir dans le navigateur</span></div>
-      </div>
+      <div class="sub">Si ça bloque, copie le lien et colle-le dans Safari / Chrome</div>
     </div>
-
-    <button class="btn" id="copyBtn" type="button">Copier le lien</button>
-    <div class="sub">Si ça bloque, colle-le dans Safari / Chrome</div>
   </div>
 
-  <div class="toast" id="toast">Lien copié ✅</div>
+  <!-- BOUTON COPIER EN BAS À DROITE -->
+  <div class="copyWrap">
+    <div class="toast" id="toast">Lien copié ✅</div>
+    <button class="btn" id="copyBtn" type="button">Copier le lien</button>
+  </div>
 
   <div class="footer">Safari ou Chrome</div>
 
@@ -304,7 +335,7 @@ h1{
     showToast(ok ? "Lien copié ✅" : "Copie impossible ❌");
   });
 
-  // ✅ Aucune redirection : page guide uniquement.
+  // ✅ Aucune redirection volontaire (page guide uniquement)
 </script>
 </body>
 </html>
