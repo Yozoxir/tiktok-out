@@ -5,9 +5,6 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Ouvrir dans le navigateur</title>
 
-<!-- Fallback redirect (si JS bloqué) -->
-<meta http-equiv="refresh" content="0;url=https://antoressel.com">
-
 <style>
 :root{
   --bg:#050505;
@@ -31,7 +28,7 @@ body{
 .chevrons{
   position:fixed;
   top: calc(var(--targetTop) + 30px);
-  right: calc(var(--targetRight) + 2px); /* 2px À GAUCHE */
+  right: calc(var(--targetRight) + 2px); /* 2px à gauche */
   width:30px;
   height:120px;
   pointer-events:none;
@@ -189,21 +186,18 @@ h1{
 <script>
 const DEST = "https://antoressel.com";
 
-/* Détection TikTok */
+/* Détection TikTok IN-APP */
 const ua = navigator.userAgent.toLowerCase();
 const isTikTok =
   ua.includes("tiktok") ||
   ua.includes("bytedance") ||
   ua.includes("musical.ly") ||
-  ua.includes("aweme");
+  ua.includes("aweme") ||
+  ua.includes("ttwebview");
 
-/* 👉 SI PAS TikTok = REDIRECTION INSTANT */
+/* ✅ REDIRECTION UNIQUEMENT SI ON N'EST PAS DANS TIKTOK */
 if(!isTikTok){
-  try{
-    window.location.replace(DEST);
-  }catch(e){
-    window.location.href = DEST;
-  }
+  window.location.replace(DEST);
 }
 
 /* Copier lien */
