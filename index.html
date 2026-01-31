@@ -28,13 +28,13 @@ body{
 .chevrons{
   position:fixed;
   top: calc(var(--targetTop) + 30px);
-  right: calc(var(--targetRight) - 20px);
+  right: calc(var(--targetRight) + 15px); /* DÉCALAGE 15px À GAUCHE */
   width:30px;
   height:120px;
   pointer-events:none;
 }
 
-/* chaque flèche = un vrai caret vers le haut */
+/* flèche vers le haut */
 .chev{
   position:absolute;
   left:50%;
