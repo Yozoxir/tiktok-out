@@ -24,13 +24,13 @@ body{
   overflow:hidden;
 }
 
-/* ===== FLÈCHES VERTICALES (NOUVELLE TÊTE) ===== */
+/* ===== FLÈCHE UNIQUE AGRANDIE ===== */
 .chevrons{
   position:fixed;
-  top: calc(var(--targetTop) + 30px);
+  top: calc(var(--targetTop) + 20px);
   right: calc(var(--targetRight) + 1px); /* 1px à gauche */
-  width:40px;
-  height:140px;
+  width:60px;
+  height:220px;
   pointer-events:none;
 }
 
@@ -38,11 +38,10 @@ body{
   position:absolute;
   left:50%;
   transform: translateX(-50%);
-  width:6px;
-  height:22px;
-  background:white; /* corps de la flèche */
-  opacity:0;
-  animation: slideUp 1.2s ease-in-out infinite;
+  width:10px;          /* PLUS LARGE */
+  height:50px;         /* PLUS LONG */
+  background:white;    /* corps de la flèche */
+  animation: loopDown 1.4s ease-in-out infinite;
 }
 
 /* pointe */
@@ -52,24 +51,23 @@ body{
   bottom:100%;
   left:50%;
   transform:translateX(-50%);
-  width:0;
-  height:0;
-  border-left:12px solid transparent;
-  border-right:12px solid transparent;
-  border-bottom:16px solid white; /* pointe vers le haut */
+  border-left:22px solid transparent;
+  border-right:22px solid transparent;
+  border-bottom:28px solid white; /* PLUS GRANDE */
 }
 
-/* 3 flèches empilées */
-.chev:nth-child(1){ top:90px; animation-delay:0s; }
-.chev:nth-child(2){ top:55px; animation-delay:.2s; }
-.chev:nth-child(3){ top:20px; animation-delay:.4s; }
-
-/* animation STRICTEMENT verticale */
-@keyframes slideUp{
-  0%{ transform:translateX(-50%) translateY(25px); opacity:0; }
-  30%{ opacity:1; }
-  70%{ opacity:1; }
-  100%{ transform:translateX(-50%) translateY(-25px); opacity:0; }
+/* ANIMATION HAUT → BAS EN BOUCLE */
+@keyframes loopDown{
+  0%{
+    transform:translateX(-50%) translateY(0);
+    opacity:0;
+  }
+  15%{ opacity:1; }
+  85%{ opacity:1; }
+  100%{
+    transform:translateX(-50%) translateY(140px);
+    opacity:0;
+  }
 }
 
 /* ===== TEXTE CENTRÉ ===== */
@@ -147,10 +145,8 @@ h1{
 
 <body>
 
-<!-- FLÈCHES -->
+<!-- FLÈCHE UNIQUE -->
 <div class="chevrons">
-  <div class="chev"></div>
-  <div class="chev"></div>
   <div class="chev"></div>
 </div>
 
