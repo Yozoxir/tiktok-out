@@ -6,15 +6,19 @@
   <title>Ouvrir dans le navigateur</title>
   <style>
     :root{
-      --bg:#0b0b0c;
+      --bg:#050506;
       --fg:#ffffff;
-      --muted:rgba(255,255,255,.65);
-      --accent:#19c37d;
+      --muted:rgba(255,255,255,.6);
+      --accent:#3cffc6;   /* couleur d’action */
+      --accent2:#6af3ff;  /* glow léger */
     }
+
     html,body{height:100%}
     body{
       margin:0;
-      background:var(--bg);
+      background:
+        radial-gradient(circle at top right, rgba(60,255,198,.15), transparent 40%),
+        var(--bg);
       color:var(--fg);
       font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
       display:flex;
@@ -26,14 +30,15 @@
 
     .wrap{
       max-width:520px;
-      padding:24px;
+      padding:26px;
     }
 
     h1{
       font-size:26px;
       margin-bottom:42px;
       line-height:1.2;
-      font-weight:800;
+      font-weight:900;
+      letter-spacing:.3px;
     }
 
     .step{
@@ -46,33 +51,37 @@
     }
 
     .num{
-      width:34px;height:34px;
-      border:2px solid var(--fg);
+      width:36px;height:36px;
+      border:2px solid var(--accent);
       border-radius:50%;
       display:flex;
       align-items:center;
       justify-content:center;
-      font-weight:800;
-    }
-
-    .green{
+      font-weight:900;
       color:var(--accent);
-      font-weight:800;
+      box-shadow:0 0 12px rgba(60,255,198,.35);
     }
 
-    /* Flèches animées vers le menu */
+    .action{
+      color:var(--accent);
+      font-weight:900;
+      text-shadow:0 0 8px rgba(60,255,198,.5);
+    }
+
+    /* Flèches animées */
     .arrows{
       position:fixed;
       top:64px;
       right:18px;
-      font-size:34px;
+      font-size:36px;
+      color:var(--accent);
       animation:float 1s infinite;
-      opacity:.9;
+      text-shadow:0 0 12px rgba(60,255,198,.7);
     }
 
     @keyframes float{
       0%{transform:translateY(0)}
-      50%{transform:translateY(-10px)}
+      50%{transform:translateY(-12px)}
       100%{transform:translateY(0)}
     }
 
@@ -82,7 +91,7 @@
       width:100%;
       font-size:12px;
       color:var(--muted);
-      letter-spacing:.2px;
+      letter-spacing:.3px;
     }
   </style>
 </head>
@@ -91,7 +100,7 @@
 <div class="arrows">⬆️⬆️⬆️</div>
 
 <div class="wrap">
-  <h1>Pour accéder au lien,<br>suis ces étapes :</h1>
+  <h1>Pour accéder au lien</h1>
 
   <div class="step">
     <div class="num">1</div>
@@ -100,7 +109,7 @@
 
   <div class="step">
     <div class="num">2</div>
-    <div>Puis <span class="green">Ouvrir dans le navigateur</span></div>
+    <div>Puis <span class="action">Ouvrir dans le navigateur</span></div>
   </div>
 </div>
 
@@ -109,7 +118,6 @@
 </div>
 
 <script>
-  // 👉 Ton lien final
   const DEST = "https://antoressel.com";
 
   const ua = navigator.userAgent.toLowerCase();
@@ -119,7 +127,6 @@
     ua.includes("musical.ly") ||
     ua.includes("aweme");
 
-  // Si ce n'est PAS TikTok → redirection directe
   if(!isTikTok){
     location.replace(DEST);
   }
