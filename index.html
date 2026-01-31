@@ -4,13 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Ouvrir dans le navigateur</title>
+
 <style>
 :root{
-  --bg:#060606;
+  --bg:#050505;
   --fg:#ffffff;
-  --muted:rgba(255,255,255,.65);
+  --muted:rgba(255,255,255,.70);
+  --muted2:rgba(255,255,255,.55);
 
-  /* Position du menu TikTok */
+  /* Position (menu TikTok en haut à droite) */
   --targetTop: calc(10px + env(safe-area-inset-top));
   --targetRight: calc(10px + env(safe-area-inset-right));
 }
@@ -18,73 +20,133 @@
 html,body{height:100%}
 body{
   margin:0;
-  background:var(--bg);
-  color:var(--fg);
-  font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
   overflow:hidden;
   text-align:center;
 }
 
-/* halo discret vers le coin */
+/* Glow premium discret + focus coin haut droit */
+.bgGlow{
+  position:fixed; inset:-40%;
+  background:
+    radial-gradient(circle at 90% 10%, rgba(255,255,255,.12), transparent 42%),
+    radial-gradient(circle at 50% 70%, rgba(255,255,255,.06), transparent 55%);
+  pointer-events:none;
+}
+
 .spotlight{
   position:fixed; inset:0;
   pointer-events:none;
   background:
     radial-gradient(circle at calc(100% - 32px) calc(0% + 48px),
-      rgba(255,255,255,.18),
-      rgba(0,0,0,0) 55%);
-  animation: glow 1.4s ease-in-out infinite;
+      rgba(255,255,255,.20),
+      rgba(0,0,0,0) 58%);
+  animation: spot 1.35s ease-in-out infinite;
+  mix-blend-mode: screen;
+  opacity:.95;
 }
-@keyframes glow{
-  0%,100%{opacity:.6}
+@keyframes spot{
+  0%,100%{opacity:.65}
   50%{opacity:1}
 }
 
-/* ===== CHEVRONS ===== */
+/* ===== CHEVRONS (flèches) ===== */
 .chevrons{
   position:fixed;
-  top: calc(var(--targetTop) + 64px);
-  right: calc(var(--targetRight) - 6px); /* PLUS À DROITE */
-  width:60px;
-  height:140px;
+  top: calc(var(--targetTop) + 62px);
+  right: calc(var(--targetRight) - 10px); /* plus à droite */
+  width:64px;
+  height:160px;
   pointer-events:none;
+  filter: drop-shadow(0 14px 28px rgba(0,0,0,.65));
 }
 
+/* Chaque chevron = “V” vers le haut (deux traits) */
 .chev{
   position:absolute;
   left:50%;
-  width:28px;
-  height:28px;
-  transform:translateX(-50%) rotate(-45deg); /* vers le HAUT */
-  border-top:4px solid #fff;
-  border-right:4px solid #fff;
+  width:30px;
+  height:30px;
+
+  /* ORIENTATION VERS LE HAUT */
+  transform: translateX(-50%) rotate(-45deg);
+
+  border-top: 5px solid #fff;
+  border-right: 5px solid #fff;
+
   opacity:0;
-  animation: rise 1.2s infinite;
+  animation: rise 1.15s cubic-bezier(.2,.8,.2,1) infinite;
+  will-change: transform, opacity;
 }
 
-.chev:nth-child(1){ top:90px; animation-delay:0s; }
-.chev:nth-child(2){ top:55px; animation-delay:.15s; }
-.chev:nth-child(3){ top:20px; animation-delay:.3s; }
+/* 3 chevrons décalés (effet “^^^”) */
+.chev:nth-child(1){ top:108px; animation-delay:0s;   opacity:.0; }
+.chev:nth-child(2){ top:70px;  animation-delay:.12s; opacity:.0; }
+.chev:nth-child(3){ top:32px;  animation-delay:.24s; opacity:.0; }
 
+/* Animation plus “pro” : apparition -> montée -> disparition */
 @keyframes rise{
-  0%   { transform:translateX(-50%) rotate(-45deg) translateY(18px); opacity:0; }
-  30%  { opacity:1; }
-  70%  { transform:translateX(-50%) rotate(-45deg) translateY(-10px); opacity:.8; }
-  100% { transform:translateX(-50%) rotate(-45deg) translateY(-26px); opacity:0; }
+  0%{
+    transform: translateX(-50%) rotate(-45deg) translateY(20px) scale(.96);
+    opacity:0;
+    filter: blur(.2px);
+  }
+  22%{ opacity:1; }
+  60%{
+    transform: translateX(-50%) rotate(-45deg) translateY(-8px) scale(1.02);
+    opacity:.95;
+  }
+  100%{
+    transform: translateX(-50%) rotate(-45deg) translateY(-26px) scale(1.03);
+    opacity:0;
+    filter: blur(.6px);
+  }
 }
 
-/* ===== TEXTE ===== */
+/* Petit “cadre” subtil autour du coin (optionnel mais aide l’œil) */
+.cornerFrame{
+  position:fixed;
+  top: var(--targetTop);
+  right: var(--targetRight);
+  width:88px;
+  height:66px;
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.03);
+  pointer-events:none;
+  animation: frame 2.2s ease-in-out infinite;
+}
+@keyframes frame{
+  0%,88%,100%{transform:translate(0,0); opacity:.9}
+  90%{transform:translate(-2px,2px); opacity:1}
+  92%{transform:translate(2px,-2px); opacity:1}
+  94%{transform:translate(-2px,1px); opacity:1}
+  96%{transform:translate(1px,-1px); opacity:1}
+}
+
+/* ===== CONTENU TEXTE + BOUTON ===== */
 .wrap{
   position:absolute;
-  bottom:80px;
   left:0; right:0;
-  padding:0 20px;
+  bottom: 92px;
+  padding:0 18px;
 }
 
 h1{
-  font-size:24px;
-  margin-bottom:28px;
-  font-weight:800;
+  margin:0 0 22px;
+  font-size:26px;
+  font-weight:900;
+  letter-spacing:.2px;
+  line-height:1.15;
+}
+
+.steps{
+  display:grid;
+  gap:14px;
+  max-width:520px;
+  margin:0 auto 18px;
 }
 
 .step{
@@ -93,25 +155,65 @@ h1{
   justify-content:center;
   gap:14px;
   font-size:18px;
-  margin:18px 0;
 }
 
 .num{
-  width:32px;height:32px;
+  width:34px;height:34px;
   border:2px solid #fff;
-  border-radius:50%;
+  border-radius:999px;
   display:flex;
   align-items:center;
   justify-content:center;
-  font-weight:800;
+  font-weight:900;
+  flex:0 0 auto;
 }
 
 .action{
   font-weight:900;
   text-decoration:underline;
+  text-underline-offset: 4px;
 }
 
-/* TEXTE DU BAS CENTRÉ */
+/* Bouton copier */
+.btn{
+  display:inline-block;
+  border:0;
+  border-radius:14px;
+  padding:14px 16px;
+  min-width: 260px;
+  font-size:16px;
+  font-weight:900;
+  cursor:pointer;
+  background:#fff;
+  color:#000;
+  box-shadow: 0 10px 30px rgba(0,0,0,.45);
+}
+.btn:active{ transform: translateY(1px); }
+
+.sub{
+  margin-top:10px;
+  font-size:12px;
+  color: var(--muted2);
+}
+
+/* Toast copie */
+.toast{
+  position:fixed;
+  left:50%;
+  transform:translateX(-50%);
+  bottom: calc(54px + env(safe-area-inset-bottom));
+  background: rgba(255,255,255,.10);
+  border: 1px solid rgba(255,255,255,.16);
+  padding:10px 12px;
+  border-radius:14px;
+  font-size:13px;
+  color:#fff;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display:none;
+}
+
+/* Footer bas centré */
 .footer{
   position:fixed;
   bottom:18px;
@@ -121,37 +223,88 @@ h1{
   text-align:center;
   font-size:12px;
   color:var(--muted);
+  letter-spacing:.2px;
 }
 </style>
 </head>
 
 <body>
+  <div class="bgGlow"></div>
+  <div class="spotlight"></div>
 
-<div class="spotlight"></div>
+  <div class="cornerFrame" aria-hidden="true"></div>
 
-<div class="chevrons">
-  <div class="chev"></div>
-  <div class="chev"></div>
-  <div class="chev"></div>
-</div>
-
-<div class="wrap">
-  <h1>Pour accéder au lien</h1>
-
-  <div class="step">
-    <div class="num">1</div>
-    <div>Clique sur <b>…</b> en haut à droite</div>
+  <div class="chevrons" aria-hidden="true">
+    <div class="chev"></div>
+    <div class="chev"></div>
+    <div class="chev"></div>
   </div>
 
-  <div class="step">
-    <div class="num">2</div>
-    <div>Puis <span class="action">Ouvrir dans le navigateur</span></div>
+  <div class="wrap">
+    <h1>Ouvre dans le navigateur</h1>
+
+    <div class="steps">
+      <div class="step">
+        <div class="num">1</div>
+        <div>Clique sur <b>…</b> en haut à droite</div>
+      </div>
+
+      <div class="step">
+        <div class="num">2</div>
+        <div>Puis <span class="action">Ouvrir dans le navigateur</span></div>
+      </div>
+    </div>
+
+    <button class="btn" id="copyBtn" type="button">Copier le lien</button>
+    <div class="sub">Si ça bloque, colle-le dans Safari / Chrome</div>
   </div>
-</div>
 
-<div class="footer">
-  Safari ou Chrome
-</div>
+  <div class="toast" id="toast">Lien copié ✅</div>
 
+  <div class="footer">Safari ou Chrome</div>
+
+<script>
+  // 🔧 Mets ton lien final ici
+  const DEST = "https://antoressel.com";
+
+  async function copyText(text){
+    try{
+      if(navigator.clipboard && window.isSecureContext){
+        await navigator.clipboard.writeText(text);
+        return true;
+      }
+    }catch(e){}
+
+    try{
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.setAttribute("readonly","");
+      ta.style.position="fixed";
+      ta.style.top="-9999px";
+      document.body.appendChild(ta);
+      ta.select();
+      const ok = document.execCommand("copy");
+      document.body.removeChild(ta);
+      return ok;
+    }catch(e){
+      return false;
+    }
+  }
+
+  const toast = document.getElementById("toast");
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.style.display = "block";
+    clearTimeout(window.__t);
+    window.__t = setTimeout(()=> toast.style.display="none", 1400);
+  }
+
+  document.getElementById("copyBtn").addEventListener("click", async ()=>{
+    const ok = await copyText(DEST);
+    showToast(ok ? "Lien copié ✅" : "Copie impossible ❌");
+  });
+
+  // ✅ Aucune redirection : page guide uniquement.
+</script>
 </body>
 </html>
