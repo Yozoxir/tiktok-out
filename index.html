@@ -26,94 +26,44 @@ body{
   overflow:hidden;
 }
 
-/* Glow premium discret */
-.bgGlow{
-  position:fixed; inset:-40%;
-  background:
-    radial-gradient(circle at 90% 10%, rgba(255,255,255,.10), transparent 45%),
-    radial-gradient(circle at 50% 70%, rgba(255,255,255,.05), transparent 55%);
-  pointer-events:none;
-}
-
-/* Spotlight léger vers le coin haut droit */
-.spotlight{
-  position:fixed; inset:0;
-  pointer-events:none;
-  background:
-    radial-gradient(circle at calc(100% - 28px) calc(0% + 44px),
-      rgba(255,255,255,.16),
-      rgba(0,0,0,0) 60%);
-  animation: spot 1.6s ease-in-out infinite;
-  mix-blend-mode: screen;
-  opacity:.9;
-}
-@keyframes spot{
-  0%,100%{opacity:.55}
-  50%{opacity:1}
-}
-
-/* ===== CHEVRONS (plus petits + plus à droite + animation nouvelle) ===== */
+/* ===== CHEVRONS (simples) ===== */
 .chevrons{
   position:fixed;
-
-  /* plus haut */
   top: calc(var(--targetTop) + 30px);
-
-  /* plus à droite (valeur plus négative = plus à droite) */
   right: calc(var(--targetRight) - 20px);
-
-  width:46px;
+  width:40px;
   height:120px;
   pointer-events:none;
-  filter: drop-shadow(0 12px 22px rgba(0,0,0,.65));
 }
 
 .chev{
   position:absolute;
   left:50%;
-
-  /* plus petit */
   width:18px;
   height:18px;
-
-  /* orientation vers le haut */
   transform: translateX(-50%) rotate(-45deg);
-
-  border-top: 3px solid #fff;
-  border-right: 3px solid #fff;
-
+  border-top:3px solid #fff;
+  border-right:3px solid #fff;
   opacity:0;
-  will-change: transform, opacity, filter;
-  animation: flowUp 1.05s ease-in-out infinite;
+  animation: slideUp 1.2s linear infinite;
 }
 
-/* 3 chevrons empilés, décalés */
-.chev:nth-child(1){ top:76px; animation-delay:0s; }
-.chev:nth-child(2){ top:46px; animation-delay:.14s; }
-.chev:nth-child(3){ top:16px; animation-delay:.28s; }
+/* 3 flèches décalées */
+.chev:nth-child(1){ top:70px; animation-delay:0s; }
+.chev:nth-child(2){ top:40px; animation-delay:.2s; }
+.chev:nth-child(3){ top:10px; animation-delay:.4s; }
 
-/* NOUVELLE ANIMATION “flow” :
-   - ils apparaissent doucement
-   - glissent vers le haut
-   - disparaissent (sans pop/zoom)
-*/
-@keyframes flowUp{
+/* ANIMATION SIMPLE */
+@keyframes slideUp{
   0%{
-    transform: translateX(-50%) rotate(-45deg) translateY(14px);
+    transform:translateX(-50%) rotate(-45deg) translateY(15px);
     opacity:0;
-    filter: blur(.7px);
   }
-  22%{
-    opacity:1;
-    filter: blur(0px);
-  }
-  65%{
-    opacity:.85;
-  }
+  30%{ opacity:1; }
+  70%{ opacity:1; }
   100%{
-    transform: translateX(-50%) rotate(-45deg) translateY(-22px);
+    transform:translateX(-50%) rotate(-45deg) translateY(-20px);
     opacity:0;
-    filter: blur(1px);
   }
 }
 
@@ -130,22 +80,18 @@ body{
 }
 
 .card{
-  width:min(560px, 92vw);
+  width:min(520px,92vw);
 }
 
 h1{
   margin:0 0 18px;
-  font-size:28px;
+  font-size:26px;
   font-weight:900;
-  letter-spacing:.2px;
-  line-height:1.1;
 }
 
 .steps{
   display:grid;
   gap:14px;
-  margin:0 auto;
-  max-width:520px;
 }
 
 .step{
@@ -157,26 +103,18 @@ h1{
 }
 
 .num{
-  width:34px;height:34px;
+  width:32px;height:32px;
   border:2px solid #fff;
-  border-radius:999px;
+  border-radius:50%;
   display:flex;
   align-items:center;
   justify-content:center;
-  font-weight:900;
-  flex:0 0 auto;
+  font-weight:800;
 }
 
 .action{
   font-weight:900;
   text-decoration:underline;
-  text-underline-offset:4px;
-}
-
-.sub{
-  margin-top:14px;
-  font-size:12px;
-  color:var(--muted2);
 }
 
 /* ===== BOUTON COPIER EN BAS À DROITE ===== */
@@ -184,11 +122,6 @@ h1{
   position:fixed;
   right: calc(14px + env(safe-area-inset-right));
   bottom: calc(14px + env(safe-area-inset-bottom));
-  display:flex;
-  flex-direction:column;
-  align-items:flex-end;
-  gap:10px;
-  z-index:5;
 }
 
 .btn{
@@ -200,116 +133,85 @@ h1{
   cursor:pointer;
   background:#fff;
   color:#000;
-  box-shadow: 0 10px 30px rgba(0,0,0,.45);
 }
-.btn:active{ transform: translateY(1px); }
 
 .toast{
-  background: rgba(255,255,255,.10);
-  border: 1px solid rgba(255,255,255,.16);
-  padding:10px 12px;
-  border-radius:14px;
-  font-size:13px;
-  color:#fff;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  display:none;
-}
-
-/* Footer bas centré */
-.footer{
   position:fixed;
-  bottom:18px;
-  left:50%;
-  transform:translateX(-50%);
-  font-size:12px;
-  color:var(--muted);
-  letter-spacing:.2px;
-  pointer-events:none;
-  opacity:.9;
+  bottom: calc(70px + env(safe-area-inset-bottom));
+  right: calc(14px + env(safe-area-inset-right));
+  background: rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.2);
+  padding:8px 12px;
+  border-radius:12px;
+  font-size:13px;
+  display:none;
 }
 </style>
 </head>
 
 <body>
-  <div class="bgGlow"></div>
-  <div class="spotlight"></div>
 
-  <!-- Flèches -->
-  <div class="chevrons" aria-hidden="true">
-    <div class="chev"></div>
-    <div class="chev"></div>
-    <div class="chev"></div>
-  </div>
+<!-- FLÈCHES -->
+<div class="chevrons">
+  <div class="chev"></div>
+  <div class="chev"></div>
+  <div class="chev"></div>
+</div>
 
-  <!-- Texte au milieu -->
-  <div class="center">
-    <div class="card">
-      <h1>Ouvre dans le navigateur</h1>
+<!-- TEXTE AU CENTRE -->
+<div class="center">
+  <div class="card">
+    <h1>Ouvre dans le navigateur</h1>
 
-      <div class="steps">
-        <div class="step">
-          <div class="num">1</div>
-          <div>Clique sur <b>…</b> en haut à droite</div>
-        </div>
-
-        <div class="step">
-          <div class="num">2</div>
-          <div>Puis <span class="action">Ouvrir dans le navigateur</span></div>
-        </div>
+    <div class="steps">
+      <div class="step">
+        <div class="num">1</div>
+        <div>Clique sur <b>…</b> en haut à droite</div>
       </div>
 
-      <div class="sub">Si ça bloque, copie le lien et colle-le dans Safari / Chrome</div>
+      <div class="step">
+        <div class="num">2</div>
+        <div>Puis <span class="action">Ouvrir dans le navigateur</span></div>
+      </div>
     </div>
   </div>
+</div>
 
-  <!-- Copier lien bas droite -->
-  <div class="copyWrap">
-    <div class="toast" id="toast">Lien copié ✅</div>
-    <button class="btn" id="copyBtn" type="button">Copier le lien</button>
-  </div>
+<!-- BOUTON COPIER -->
+<div class="copyWrap">
+  <button class="btn" id="copyBtn">Copier le lien</button>
+</div>
 
-  <div class="footer">Safari ou Chrome</div>
+<div class="toast" id="toast">Lien copié ✅</div>
 
 <script>
-  const DEST = "https://antoressel.com";
+const DEST = "https://antoressel.com";
 
-  async function copyText(text){
-    try{
-      if(navigator.clipboard && window.isSecureContext){
-        await navigator.clipboard.writeText(text);
-        return true;
-      }
-    }catch(e){}
-
-    try{
-      const ta = document.createElement("textarea");
-      ta.value = text;
-      ta.setAttribute("readonly","");
-      ta.style.position="fixed";
-      ta.style.top="-9999px";
-      document.body.appendChild(ta);
-      ta.select();
-      const ok = document.execCommand("copy");
-      document.body.removeChild(ta);
-      return ok;
-    }catch(e){
-      return false;
+async function copyText(text){
+  try{
+    if(navigator.clipboard && window.isSecureContext){
+      await navigator.clipboard.writeText(text);
+      return true;
     }
-  }
+  }catch(e){}
+  const ta=document.createElement("textarea");
+  ta.value=text;
+  ta.style.position="fixed";
+  ta.style.top="-9999px";
+  document.body.appendChild(ta);
+  ta.select();
+  document.execCommand("copy");
+  document.body.removeChild(ta);
+  return true;
+}
 
-  const toast = document.getElementById("toast");
-  function showToast(msg){
-    toast.textContent = msg;
-    toast.style.display = "block";
-    clearTimeout(window.__t);
-    window.__t = setTimeout(()=> toast.style.display="none", 1400);
-  }
-
-  document.getElementById("copyBtn").addEventListener("click", async ()=>{
-    const ok = await copyText(DEST);
-    showToast(ok ? "Lien copié ✅" : "Copie impossible ❌");
-  });
+const toast=document.getElementById("toast");
+document.getElementById("copyBtn").addEventListener("click",async()=>{
+  await copyText(DEST);
+  toast.style.display="block";
+  setTimeout(()=>toast.style.display="none",1200);
+});
 </script>
+
 </body>
 </html>
