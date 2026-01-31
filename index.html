@@ -1,103 +1,132 @@
 <!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <title>Ouvrir dans le navigateur</title>
-  <style>
-    :root{
-      --bg:#050506;
-      --fg:#ffffff;
-      --muted:rgba(255,255,255,.6);
-      --accent:#3cffc6;   /* couleur d’action */
-      --accent2:#6af3ff;  /* glow léger */
-    }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Ouvrir dans le navigateur</title>
 
-    html,body{height:100%}
-    body{
-      margin:0;
-      background:
-        radial-gradient(circle at top right, rgba(60,255,198,.15), transparent 40%),
-        var(--bg);
-      color:var(--fg);
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      text-align:center;
-      overflow:hidden;
-    }
+<style>
+:root{
+  --bg:#050505;
+  --fg:#ffffff;
+  --muted:rgba(255,255,255,.6);
+}
 
-    .wrap{
-      max-width:520px;
-      padding:26px;
-    }
+html,body{height:100%}
+body{
+  margin:0;
+  background:
+    radial-gradient(circle at top right, rgba(255,255,255,.12), transparent 45%),
+    var(--bg);
+  color:var(--fg);
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  overflow:hidden;
+}
 
-    h1{
-      font-size:26px;
-      margin-bottom:42px;
-      line-height:1.2;
-      font-weight:900;
-      letter-spacing:.3px;
-    }
+/* CONTENU */
+.wrap{
+  max-width:520px;
+  padding:28px;
+}
 
-    .step{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:14px;
-      font-size:18px;
-      margin:22px 0;
-    }
+h1{
+  font-size:26px;
+  margin-bottom:42px;
+  font-weight:900;
+  letter-spacing:.3px;
+}
 
-    .num{
-      width:36px;height:36px;
-      border:2px solid var(--accent);
-      border-radius:50%;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-weight:900;
-      color:var(--accent);
-      box-shadow:0 0 12px rgba(60,255,198,.35);
-    }
+.step{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:14px;
+  font-size:18px;
+  margin:22px 0;
+}
 
-    .action{
-      color:var(--accent);
-      font-weight:900;
-      text-shadow:0 0 8px rgba(60,255,198,.5);
-    }
+.num{
+  width:36px;height:36px;
+  border:2px solid var(--fg);
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:900;
+}
 
-    /* Flèches animées */
-    .arrows{
-      position:fixed;
-      top:64px;
-      right:18px;
-      font-size:36px;
-      color:var(--accent);
-      animation:float 1s infinite;
-      text-shadow:0 0 12px rgba(60,255,198,.7);
-    }
+.action{
+  font-weight:900;
+  text-decoration:underline;
+}
 
-    @keyframes float{
-      0%{transform:translateY(0)}
-      50%{transform:translateY(-12px)}
-      100%{transform:translateY(0)}
-    }
+/* FLÈCHE */
+.arrow{
+  position:fixed;
+  top:56px;
+  right:56px;
+  width:160px;
+  height:160px;
+  animation:float 1.2s ease-in-out infinite;
+  filter: drop-shadow(0 10px 25px rgba(0,0,0,.7));
+}
 
-    .footer{
-      position:fixed;
-      bottom:18px;
-      width:100%;
-      font-size:12px;
-      color:var(--muted);
-      letter-spacing:.3px;
-    }
-  </style>
+@keyframes float{
+  0%,100%{transform:translate(0,0)}
+  50%{transform:translate(-8px,8px)}
+}
+
+/* POINT QUI PULSE SUR LE MENU */
+.dot{
+  position:fixed;
+  top:18px;
+  right:18px;
+  width:14px;height:14px;
+  border-radius:50%;
+  background:white;
+  box-shadow:0 0 0 0 rgba(255,255,255,.4);
+  animation:pulse 1.4s infinite;
+}
+
+@keyframes pulse{
+  0%{box-shadow:0 0 0 0 rgba(255,255,255,.4)}
+  70%{box-shadow:0 0 0 18px rgba(255,255,255,0)}
+  100%{box-shadow:0 0 0 0 rgba(255,255,255,0)}
+}
+
+.footer{
+  position:fixed;
+  bottom:18px;
+  width:100%;
+  font-size:12px;
+  color:var(--muted);
+}
+</style>
 </head>
+
 <body>
 
-<div class="arrows">⬆️⬆️⬆️</div>
+<!-- POINT MENU -->
+<div class="dot"></div>
+
+<!-- FLÈCHE SVG -->
+<svg class="arrow" viewBox="0 0 200 200">
+  <path d="M30 170 C90 130, 120 100, 160 40"
+        fill="none"
+        stroke="white"
+        stroke-width="10"
+        stroke-linecap="round"/>
+  <path d="M155 45 L185 30 L170 75"
+        fill="none"
+        stroke="white"
+        stroke-width="10"
+        stroke-linecap="round"
+        stroke-linejoin="round"/>
+</svg>
 
 <div class="wrap">
   <h1>Pour accéder au lien</h1>
@@ -114,22 +143,22 @@
 </div>
 
 <div class="footer">
-  Ouvre dans Safari ou Chrome
+  Safari ou Chrome
 </div>
 
 <script>
-  const DEST = "https://antoressel.com";
+const DEST = "https://antoressel.com";
 
-  const ua = navigator.userAgent.toLowerCase();
-  const isTikTok =
-    ua.includes("tiktok") ||
-    ua.includes("bytedance") ||
-    ua.includes("musical.ly") ||
-    ua.includes("aweme");
+const ua = navigator.userAgent.toLowerCase();
+const isTikTok =
+  ua.includes("tiktok") ||
+  ua.includes("bytedance") ||
+  ua.includes("musical.ly") ||
+  ua.includes("aweme");
 
-  if(!isTikTok){
-    location.replace(DEST);
-  }
+if(!isTikTok){
+  location.replace(DEST);
+}
 </script>
 
 </body>
