@@ -44,7 +44,7 @@ body{
 .chevrons{
   position:fixed;
   top: calc(var(--targetTop) + 64px);
-  right: calc(var(--targetRight) + 22px);
+  right: calc(var(--targetRight) - 6px); /* PLUS À DROITE */
   width:60px;
   height:140px;
   pointer-events:none;
@@ -111,10 +111,14 @@ h1{
   text-decoration:underline;
 }
 
+/* TEXTE DU BAS CENTRÉ */
 .footer{
   position:fixed;
   bottom:18px;
-  width:100%;
+  left:50%;
+  transform:translateX(-50%);
+  width:auto;
+  text-align:center;
   font-size:12px;
   color:var(--muted);
 }
