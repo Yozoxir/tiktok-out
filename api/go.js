@@ -1,57 +1,38 @@
 export default async function handler(req, res) {
-  const DEST = "https://antoressel.com"; // destination finale
+  const DEST = "https://antoressel.com"; // ton site final
   const slug = (req.query.slug || "home").toString();
 
-  const redisUrl = process.env.UPSTASH_REDIS_REST_URL;
-  const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN;
+  const redisUrl = process.env.KV_REST_API_URL;
+  const redisToken = process.env.KV_REST_API_TOKEN;
   const discordWebhook = process.env.DISCORD_WEBHOOK_URL;
 
   if (!redisUrl || !redisToken) {
-    return res.status(500).send("Missing Upstash env vars");
+    return res.status(500).send("Missing KV env vars");
   }
 
-  // 1) INCR compteur via Upstash REST (retourne la nouvelle valeur)
+  // +1 compteur
   const key = `clicks:${slug}`;
   const incrResp = await fetch(`${redisUrl}/incr/${encodeURIComponent(key)}`, {
-    headers: { Authorization: `Bearer ${redisToken}` },
+    headers: {
+      Authorization: `Bearer ${redisToken}`,
+    },
   });
 
   const incrJson = await incrResp.json();
-  const count = incrJson?.result ?? null;
+  const count = incrJson.result;
 
-  // 2) Envoi Discord webhook (embed)
-  // ⚠️ Discord rate limit si tu as beaucoup de clics : pour gros trafic, faut buffer.
+  // Envoi webhook Discord
   if (discordWebhook) {
-    const now = new Date().toISOString();
-
-    // petit “device detect” basique
-    const ua = (req.headers["user-agent"] || "").toLowerCase();
-    const isIOS = /iphone|ipad|ipod/.test(ua);
-    const isAndroid = /android/.test(ua);
-    const isTikTok =
-      ua.includes("tiktok") ||
-      ua.includes("bytedance") ||
-      ua.includes("musical.ly") ||
-      ua.includes("aweme") ||
-      ua.includes("ttwebview");
-
     const embed = {
       title: "📈 Nouveau clic",
-      description: `Slug: **${slug}**`,
+      description: `Slug : **${slug}**`,
       fields: [
-        { name: "Total clics", value: count === null ? "?" : String(count), inline: true },
-        { name: "TikTok WebView", value: isTikTok ? "Oui" : "Non", inline: true },
-        {
-          name: "Device",
-          value: isIOS ? "iOS" : isAndroid ? "Android" : "Autre",
-          inline: true,
-        },
+        { name: "Total de clics", value: String(count), inline: true }
       ],
-      timestamp: now,
+      color: 5814783,
+      timestamp: new Date().toISOString()
     };
 
-    // On n'attend pas Discord pour rediriger trop lentement.
-    // Mais en serverless, mieux vaut await quand même pour fiabilité.
     await fetch(discordWebhook, {
       method: "POST",
       headers: { "content-type": "application/json" },
@@ -59,7 +40,7 @@ export default async function handler(req, res) {
     }).catch(() => {});
   }
 
-  // 3) Redirect
+  // Redirection
   res.writeHead(302, { Location: DEST });
   res.end();
 }
