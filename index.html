@@ -9,9 +9,8 @@
 :root{
   --bg:#050505;
   --fg:#ffffff;
-  --muted:rgba(255,255,255,.7);
 
-  /* position du menu TikTok */
+  /* position menu TikTok */
   --targetTop: calc(10px + env(safe-area-inset-top));
   --targetRight: calc(10px + env(safe-area-inset-right));
 }
@@ -25,28 +24,27 @@ body{
   overflow:hidden;
 }
 
-/* ===== FLÈCHES ===== */
+/* ===== FLÈCHES VERTICALES ===== */
 .chevrons{
   position:fixed;
   top: calc(var(--targetTop) + 30px);
   right: calc(var(--targetRight) - 20px);
-  width:40px;
+  width:30px;
   height:120px;
   pointer-events:none;
 }
 
-/* flèche verticale */
+/* chaque flèche = un vrai caret vers le haut */
 .chev{
   position:absolute;
   left:50%;
-  width:14px;
-  height:14px;
-
-  /* forme ^ vers le haut */
-  transform: translateX(-50%) rotate(45deg);
-
-  border-left:3px solid #fff;
-  border-top:3px solid #fff;
+  width:0;
+  height:0;
+  transform: translateX(-50%);
+  
+  border-left:7px solid transparent;
+  border-right:7px solid transparent;
+  border-bottom:10px solid white; /* pointe vers le haut */
 
   opacity:0;
   animation: slideUp 1.2s ease-in-out infinite;
@@ -57,21 +55,21 @@ body{
 .chev:nth-child(2){ top:40px; animation-delay:.2s; }
 .chev:nth-child(3){ top:10px; animation-delay:.4s; }
 
-/* animation VERTICALE */
+/* animation STRICTEMENT verticale */
 @keyframes slideUp{
   0%{
-    transform: translateX(-50%) rotate(45deg) translateY(20px);
+    transform: translateX(-50%) translateY(20px);
     opacity:0;
   }
   30%{ opacity:1; }
   70%{ opacity:1; }
   100%{
-    transform: translateX(-50%) rotate(45deg) translateY(-25px);
+    transform: translateX(-50%) translateY(-20px);
     opacity:0;
   }
 }
 
-/* ===== TEXTE CENTRÉ ===== */
+/* ===== TEXTE AU CENTRE ===== */
 .center{
   position:fixed;
   inset:0;
@@ -80,7 +78,6 @@ body{
   justify-content:center;
   text-align:center;
   padding:0 18px;
-  pointer-events:none;
 }
 
 .card{
@@ -200,7 +197,6 @@ async function copyText(text){
   ta.select();
   document.execCommand("copy");
   document.body.removeChild(ta);
-  return true;
 }
 
 const toast=document.getElementById("toast");
