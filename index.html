@@ -2,126 +2,213 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Ouvrir dans le navigateur</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Ouvrir…</title>
   <style>
-    body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;margin:0;padding:22px;line-height:1.45;background:#fafafa}
-    .card{max-width:620px;margin:0 auto;padding:22px;border:1px solid #ddd;border-radius:18px;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.06)}
-    h1{font-size:20px;margin:0 0 10px}
-    p{font-size:16px;margin:10px 0}
-    .btn{display:block;width:100%;padding:14px 16px;border-radius:12px;border:0;font-size:16px;text-align:center;text-decoration:none;margin-top:10px;cursor:pointer}
-    .primary{background:#111;color:#fff}
-    .secondary{background:#eee;color:#111}
-    .danger{background:#ffe8e8;color:#7a1111}
-    .hint{color:#555;font-size:14px;margin-top:14px}
-    code{background:#f2f2f2;padding:2px 6px;border-radius:6px}
-    .small{font-size:13px;color:#666}
-    .row{display:flex;gap:10px;margin-top:10px}
-    .row > *{flex:1}
-    @media (max-width:520px){.row{flex-direction:column}}
+    :root{
+      --bg:#0b0b0c;
+      --fg:#fff;
+      --muted:rgba(255,255,255,.72);
+      --glass:rgba(255,255,255,.10);
+      --glass2:rgba(255,255,255,.16);
+    }
+    html,body{height:100%}
+    body{
+      margin:0; background:var(--bg); color:var(--fg);
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+      overflow:hidden;
+      -webkit-tap-highlight-color: transparent;
+      user-select:none;
+    }
+
+    /* Zone cliquable full-screen (tap anywhere) */
+    .tapzone{
+      position:fixed; inset:0;
+      display:flex; align-items:center; justify-content:center;
+      padding:24px;
+      cursor:pointer;
+    }
+
+    /* Carte minimale (peu de texte) */
+    .card{
+      width:min(520px,92vw);
+      text-align:center;
+      padding:18px 16px;
+      border-radius:18px;
+      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
+      border:1px solid rgba(255,255,255,.12);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 20px 60px rgba(0,0,0,.45);
+    }
+    .tiny{font-size:14px; color:var(--muted); line-height:1.35; margin:0}
+    .row{display:flex; gap:10px; margin-top:12px; justify-content:center; flex-wrap:wrap}
+    .btn{
+      appearance:none; border:0;
+      padding:12px 14px;
+      border-radius:14px;
+      font-weight:700; font-size:15px;
+      cursor:pointer;
+      min-width: 160px;
+    }
+    .primary{background:#fff;color:#000}
+    .secondary{background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.18)}
+    .toast{
+      margin-top:10px;
+      font-size:13px;
+      color:rgba(255,255,255,.85);
+      display:none;
+    }
+
+    /* Couche de guidage vers le coin haut droit */
+    .guide{
+      position:fixed; inset:0;
+      pointer-events:none;
+      padding:
+        env(safe-area-inset-top)
+        env(safe-area-inset-right)
+        env(safe-area-inset-bottom)
+        env(safe-area-inset-left);
+    }
+    .pulseDot{
+      position:absolute;
+      top:14px; right:14px;
+      width:14px; height:14px; border-radius:999px;
+      background:#fff;
+      box-shadow:0 0 0 0 rgba(255,255,255,.35);
+      animation:pulse 1.25s infinite;
+    }
+    @keyframes pulse{
+      0%{box-shadow:0 0 0 0 rgba(255,255,255,.35)}
+      70%{box-shadow:0 0 0 18px rgba(255,255,255,0)}
+      100%{box-shadow:0 0 0 0 rgba(255,255,255,0)}
+    }
+
+    .arrow{
+      position:absolute;
+      top:58px; right:58px;
+      width:180px; height:180px;
+      filter: drop-shadow(0 14px 28px rgba(0,0,0,.55));
+      animation:float 1.1s ease-in-out infinite;
+      opacity:.96;
+    }
+    @keyframes float{
+      0%,100%{transform:translate(0,0)}
+      50%{transform:translate(-7px,7px)}
+    }
+    .arrow::before{
+      content:"";
+      position:absolute; inset:0;
+      background:no-repeat center/contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260' viewBox='0 0 260 260'%3E%3Cpath d='M40 210 C105 170, 132 140, 182 70' fill='none' stroke='white' stroke-width='12' stroke-linecap='round'/%3E%3Cpath d='M178 72 L228 58 L205 105' fill='none' stroke='white' stroke-width='12' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    }
+
+    /* Label ultra court */
+    .label{
+      position:absolute;
+      top:106px; right:16px;
+      max-width: 220px;
+      font-size:13px;
+      color:#fff;
+      background:rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.16);
+      padding:10px 12px;
+      border-radius:16px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .label b{font-weight:800}
+
+    /* Petit “shake” sur le coin pour attirer l’oeil */
+    .cornerShake{
+      position:absolute;
+      top:10px; right:10px;
+      width:56px; height:56px;
+      border-radius:16px;
+      border:1px dashed rgba(255,255,255,.22);
+      background:rgba(255,255,255,.05);
+      animation:shake 2.6s infinite;
+    }
+    @keyframes shake{
+      0%,88%,100%{transform:translate(0,0)}
+      90%{transform:translate(-2px,2px)}
+      92%{transform:translate(2px,-2px)}
+      94%{transform:translate(-2px,1px)}
+      96%{transform:translate(1px,-1px)}
+      98%{transform:translate(-1px,1px)}
+    }
   </style>
 </head>
+
 <body>
-  <div class="card" id="card" style="display:none">
-    <h1>Ouvre dans Safari / Chrome pour éviter les blocages</h1>
-    <p>Les navigateurs intégrés (TikTok/Instagram/Facebook…) bloquent parfois PayPal ou les paiements. Ouvre le lien dans ton navigateur.</p>
-
-    <a class="btn primary" id="openBtn" href="#" rel="noopener">Ouvrir le lien (recommandé)</a>
-
-    <div class="row">
-      <button class="btn secondary" id="copyBtn" type="button">Copier le lien</button>
-      <a class="btn secondary" id="continueBtn" href="#" rel="noopener">Continuer quand même</a>
+  <div class="tapzone" id="tapzone" aria-label="Toucher pour ouvrir">
+    <div class="card">
+      <p class="tiny">Touchez l’écran pour ouvrir.<br><span style="opacity:.9">Sinon : <b>☰/…</b> en haut → <b>Ouvrir dans le navigateur</b>.</span></p>
+      <div class="row">
+        <button class="btn primary" id="openBtn" type="button">Ouvrir</button>
+        <button class="btn secondary" id="copyBtn" type="button">Copier</button>
+      </div>
+      <div class="toast" id="toast">Lien copié ✅</div>
     </div>
+  </div>
 
-    <p class="hint" id="hint"></p>
-    <p class="small" id="subhint"></p>
-
-    <p class="hint" id="debug" style="display:none"></p>
+  <div class="guide" id="guide" style="display:none">
+    <div class="cornerShake"></div>
+    <div class="pulseDot"></div>
+    <div class="arrow"></div>
+    <div class="label">Clique <b>☰ / …</b><br>→ <b>Ouvrir</b></div>
   </div>
 
   <script>
-    // ✅ Destination finale
+    // ✅ Destination finale (tu peux ajouter des UTM pour tracker)
     const DEST = "https://antoressel.com";
-
-    // Options URL:
-    // ?force=1 => force l'affichage de la page
-    // ?debug=1 => affiche les infos de debug
-    const params = new URLSearchParams(location.search);
-    const FORCE = params.get("force") === "1";
-    const DEBUG = params.get("debug") === "1";
 
     const uaRaw = navigator.userAgent || "";
     const ua = uaRaw.toLowerCase();
 
-    const isIOS = /iphone|ipad|ipod/i.test(uaRaw);
     const isAndroid = /android/i.test(uaRaw);
+    const isTikTok = (
+      ua.includes("tiktok") || ua.includes("bytedance") || ua.includes("musical.ly") ||
+      ua.includes("aweme") || ua.includes("ttwebview")
+    );
 
-    // Détection large in-app browsers
-    // (volontairement redondante : certaines apps changent l’UA selon versions)
-    const inAppSignals = [
-      // Meta / IG
-      "instagram","fbav","fban","fbios","fb_iab","fb4a","facebook",
-      // TikTok / ByteDance
-      "tiktok","musical.ly","bytedance","ttwebview","aweme",
-      // Snap / Pinterest / Line
-      "snapchat","pinterest","line/",
-      // Others common in-app
-      "twitter","x.com","linkedinapp","reddit","telegram","whatsapp",
-      "messenger","wechat","micromessenger",
-      // Generic webview markers
-      "wv","webview"
-    ];
+    // Android intent (souvent le meilleur pour sortir)
+    function androidIntentUrl(url){
+      try{
+        const u = new URL(url);
+        return "intent://" + u.host + u.pathname + (u.search||"") +
+          "#Intent;scheme=" + u.protocol.replace(":","") + ";package=com.android.chrome;end";
+      }catch(e){ return null; }
+    }
 
-    const isInApp = inAppSignals.some(s => ua.includes(s));
-
-    // Heuristique iOS WebView:
-    // iOS Safari contient généralement "safari" (sauf Chrome iOS: "crios", Firefox iOS: "fxios")
-    const looksLikeWebViewIOS =
-      isIOS &&
-      !ua.includes("safari") &&
-      !ua.includes("crios") &&
-      !ua.includes("fxios") &&
-      !ua.includes("opios");
-
-    // Heuristique Android WebView:
-    // "wv" ou "; wv" + absence de "chrome/" peut indiquer webview.
-    const looksLikeWebViewAndroid =
-      isAndroid && (ua.includes(" wv") || ua.includes("; wv") || ua.includes("version/")) && ua.includes("chrome/");
-
-    const mobile = isIOS || isAndroid;
-
-    // Referrer vide sur mobile + webview iOS => souvent un in-app
-    const refEmpty = !document.referrer;
-
-    // Décision "gate"
-    const shouldShowGate = FORCE || isInApp || looksLikeWebViewIOS || looksLikeWebViewAndroid || (mobile && refEmpty && (looksLikeWebViewIOS));
-
-    // --- Utils ---
-    function escapeHtml(s){return String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");}
-
-    function setLinks(){
-      document.getElementById("openBtn").href = DEST;
-      document.getElementById("continueBtn").href = DEST;
+    function tryOpen(){
+      // 1) Android: intent d'abord
+      if(isAndroid){
+        const intent = androidIntentUrl(DEST);
+        if(intent){
+          try{ location.href = intent; }catch(e){}
+          // fallback normal si intent ignoré
+          setTimeout(()=>{ try{ location.href = DEST; }catch(e){} }, 380);
+          return;
+        }
+      }
+      // 2) Sinon: navigation classique
+      try{ location.href = DEST; }catch(e){}
     }
 
     async function copyText(text){
-      // Clipboard API
       try{
         if(navigator.clipboard && window.isSecureContext){
           await navigator.clipboard.writeText(text);
           return true;
         }
       }catch(e){}
-
-      // Fallback execCommand
       try{
         const ta = document.createElement("textarea");
         ta.value = text;
         ta.setAttribute("readonly","");
-        ta.style.position = "fixed";
-        ta.style.top = "-9999px";
+        ta.style.position="fixed";
+        ta.style.top="-9999px";
         document.body.appendChild(ta);
-        ta.focus();
         ta.select();
         const ok = document.execCommand("copy");
         document.body.removeChild(ta);
@@ -131,105 +218,37 @@
       }
     }
 
-    // Tentative agressive d'ouverture externe (surtout Android).
-    // Sur iOS, Apple bloque souvent si pas “user gesture”.
-    function tryOpenExternal(){
-      // 1) tentative window.open (peut être bloquée en in-app)
-      let opened = false;
-      try{
-        const w = window.open(DEST, "_blank", "noopener,noreferrer");
-        opened = !!w;
-      }catch(e){}
-
-      // 2) fallback location.href (si window.open bloqué)
-      // (ne pas utiliser replace ici, on veut garder un retour possible)
-      if(!opened){
-        try{ location.href = DEST; }catch(e){}
-      }
-    }
-
-    // Android: tentative "intent://" pour forcer Chrome (quand supporté)
-    function androidIntentUrl(httpUrl){
-      // Convertit https://example.com/path?x=1 => intent://example.com/path?x=1#Intent;scheme=https;package=com.android.chrome;end
-      try{
-        const u = new URL(httpUrl);
-        const hostAndPath = u.host + u.pathname;
-        const qs = u.search || "";
-        return "intent://" + hostAndPath + qs + "#Intent;scheme=" + u.protocol.replace(":","") + ";package=com.android.chrome;end";
-      }catch(e){
-        return null;
-      }
-    }
-
-    function showGate(){
-      const card = document.getElementById("card");
-      card.style.display = "block";
-      setLinks();
-
-      const hint = document.getElementById("hint");
-      const subhint = document.getElementById("subhint");
-
-      if(isIOS){
-        hint.innerHTML = 'Sur iPhone : touche <code>…</code> puis <b>Ouvrir dans Safari</b>.';
-        subhint.textContent = "Si ça ne marche pas, copie le lien puis colle-le dans Safari.";
-      }else if(isAndroid){
-        hint.innerHTML = 'Sur Android : touche <code>…</code> puis <b>Ouvrir dans le navigateur</b> / <b>Chrome</b>.';
-        subhint.textContent = "Astuce : le bouton “Ouvrir” tente aussi de forcer Chrome automatiquement sur certains Android.";
-      }else{
-        hint.innerHTML = 'Ouvre ce lien dans ton navigateur.';
-        subhint.textContent = "";
-      }
-
-      // Bouton ouvrir : “max power”
-      document.getElementById("openBtn").addEventListener("click", (e)=>{
-        e.preventDefault();
-
-        // Android intent d'abord (souvent le plus efficace)
-        if(isAndroid){
-          const intent = androidIntentUrl(DEST);
-          if(intent){
-            // tentative intent
-            try{ location.href = intent; }catch(err){}
-            // fallback normal après petit délai
-            setTimeout(()=>{ tryOpenExternal(); }, 350);
-            return;
-          }
-        }
-
-        // iOS & autres
-        tryOpenExternal();
-      });
-
-      // Copier
-      const copyBtn = document.getElementById("copyBtn");
-      copyBtn.addEventListener("click", async ()=>{
-        const ok = await copyText(DEST);
-        copyBtn.textContent = ok ? "Lien copié ✅" : "Impossible de copier ❌";
-        setTimeout(()=>copyBtn.textContent="Copier le lien", 1600);
-      });
-
-      // Debug
-      if(DEBUG){
-        const d = document.getElementById("debug");
-        d.style.display = "block";
-        d.innerHTML =
-          "<b>Debug</b><br>" +
-          "UA: <code>" + escapeHtml(uaRaw) + "</code><br>" +
-          "isIOS: <code>" + isIOS + "</code> | isAndroid: <code>" + isAndroid + "</code><br>" +
-          "isInApp: <code>" + isInApp + "</code><br>" +
-          "looksLikeWebViewIOS: <code>" + looksLikeWebViewIOS + "</code><br>" +
-          "looksLikeWebViewAndroid: <code>" + looksLikeWebViewAndroid + "</code><br>" +
-          "referrerEmpty: <code>" + refEmpty + "</code><br>" +
-          "shouldShowGate: <code>" + shouldShowGate + "</code><br>";
-      }
-    }
-
-    if(shouldShowGate){
-      showGate();
-    }else{
-      // Redirection directe si on pense être dans un vrai navigateur
+    // ✅ Si PAS TikTok → redirection directe (max conversion)
+    if(!isTikTok){
       location.replace(DEST);
+    } else {
+      // TikTok: afficher le guide (flèche)
+      document.getElementById("guide").style.display = "block";
+
+      // Tentative “auto” douce (parfois marche, souvent bloquée sur iPhone)
+      setTimeout(()=>{ try { location.href = DEST; } catch(e){} }, 700);
     }
+
+    // Tap anywhere => open
+    const tapzone = document.getElementById("tapzone");
+    tapzone.addEventListener("click", () => tryOpen(), { passive:true });
+    tapzone.addEventListener("touchstart", () => tryOpen(), { passive:true });
+
+    // Bouton ouvrir (au cas où)
+    document.getElementById("openBtn").addEventListener("click", (e)=>{
+      e.stopPropagation();
+      tryOpen();
+    });
+
+    // Copier
+    document.getElementById("copyBtn").addEventListener("click", async (e)=>{
+      e.stopPropagation();
+      const ok = await copyText(DEST);
+      const toast = document.getElementById("toast");
+      toast.style.display = ok ? "block" : "block";
+      toast.textContent = ok ? "Lien copié ✅" : "Copie impossible ❌";
+      setTimeout(()=>toast.style.display="none", 1400);
+    });
   </script>
 </body>
 </html>
