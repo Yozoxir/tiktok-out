@@ -24,13 +24,13 @@ body{
   overflow:hidden;
 }
 
-/* ===== FLÈCHE UNIQUE AGRANDIE ===== */
+/* ===== FLÈCHE UNIQUE (plus petite) ===== */
 .chevrons{
   position:fixed;
   top: calc(var(--targetTop) + 20px);
-  right: calc(var(--targetRight) + 1px); /* 1px à gauche */
-  width:60px;
-  height:220px;
+  right: calc(var(--targetRight) + 1px);
+  width:50px;
+  height:180px;
   pointer-events:none;
 }
 
@@ -38,10 +38,10 @@ body{
   position:absolute;
   left:50%;
   transform: translateX(-50%);
-  width:10px;          /* PLUS LARGE */
-  height:50px;         /* PLUS LONG */
-  background:white;    /* corps de la flèche */
-  animation: loopDown 1.4s ease-in-out infinite;
+  width:6px;          /* PLUS PETIT */
+  height:30px;        /* PLUS PETIT */
+  background:white;
+  animation: upDown 1.2s ease-in-out infinite alternate;
 }
 
 /* pointe */
@@ -51,22 +51,18 @@ body{
   bottom:100%;
   left:50%;
   transform:translateX(-50%);
-  border-left:22px solid transparent;
-  border-right:22px solid transparent;
-  border-bottom:28px solid white; /* PLUS GRANDE */
+  border-left:14px solid transparent;
+  border-right:14px solid transparent;
+  border-bottom:18px solid white;
 }
 
-/* ANIMATION HAUT → BAS EN BOUCLE */
-@keyframes loopDown{
-  0%{
+/* animation : monte / descend en continu */
+@keyframes upDown{
+  from{
     transform:translateX(-50%) translateY(0);
-    opacity:0;
   }
-  15%{ opacity:1; }
-  85%{ opacity:1; }
-  100%{
-    transform:translateX(-50%) translateY(140px);
-    opacity:0;
+  to{
+    transform:translateX(-50%) translateY(100px);
   }
 }
 
@@ -145,7 +141,7 @@ h1{
 
 <body>
 
-<!-- FLÈCHE UNIQUE -->
+<!-- FLÈCHE -->
 <div class="chevrons">
   <div class="chev"></div>
 </div>
