@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Ouvrir dans le navigateur</title>
+  <style>
+    body{
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin:0;
+      padding:22px;
+      line-height:1.4;
+      background:#fafafa;
+    }
+    .card{
+      max-width:560px;
+      margin:0 auto;
+      padding:20px;
+      border:1px solid #ddd;
+      border-radius:16px;
+      background:#fff;
+      box-shadow:0 2px 6px rgba(0,0,0,0.05);
+    }
+    h1{font-size:20px;margin-top:0}
+    p{font-size:16px}
+    .btn{
+      display:block;
+      width:100%;
+      padding:14px 16px;
+      border-radius:12px;
+      border:0;
+      font-size:16px;
+      text-align:center;
+      text-decoration:none;
+      cursor:pointer;
+      margin-top:10px;
+    }
+    .primary{background:#111;color:#fff}
+    .secondary{background:#eee;color:#111}
+    .hint{
+      color:#555;
+      font-size:14px;
+      margin-top:14px;
+    }
+    code{
+      background:#f2f2f2;
+      padding:2px 6px;
+      border-radius:6px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card" id="card" style="display:none">
+    <h1>Pour payer, ouvre dans Safari / Chrome</h1>
+    <p>
+      Le navigateur intégré de TikTok bloque parfois PayPal.
+      Pour que le paiement fonctionne, ouvre ce lien dans ton navigateur.
+    </p>
+
+    <a class="btn primary" id="openBtn" href="#">Ouvrir le lien</a>
+    <a class="btn secondary" id="continueBtn" href="#">Continuer quand même</a>
+
+    <p class="hint" id="hint"></p>
+  </div>
+
+  <script>
+    // 👉 TON lien Beacons
+    const DEST = "https://antoressel.com";
+
+    const ua = navigator.userAgent.toLowerCase();
+    const isTikTok = ua.includes("tiktok") || ua.includes("musical.ly");
+    const isInstagram = ua.includes("instagram");
+    const isFacebook = ua.includes("fbav") || ua.includes("fban");
+    const isInApp = isTikTok || isInstagram || isFacebook;
+
+    // Si on n'est PAS dans un navigateur intégré → redirection directe
+    if (!isInApp) {
+      window.location.replace(DEST);
+    } else {
+      // Sinon, on affiche la page d'instructions
+      document.getElementById("card").style.display = "block";
+
+      document.getElementById("openBtn").href = DEST;
+      document.getElementById("continueBtn").href = DEST;
+
+      const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+      const isAndroid = /android/i.test(navigator.userAgent);
+      const hint = document.getElementById("hint");
+
+      if (isTikTok && isIOS) {
+        hint.innerHTML = 'Sur iPhone : touche <code>…</code> en haut puis <b>Ouvrir dans Safari</b>.';
+      } else if (isTikTok && isAndroid) {
+        hint.innerHTML = 'Sur Android : touche <code>…</code> puis <b>Ouvrir dans le navigateur</b> ou <b>Chrome</b>.';
+      } else {
+        hint.innerHTML = 'Touche <code>…</code> puis <b>Ouvrir dans le navigateur</b>.';
+      }
+    }
+  </script>
+
+</body>
+</html>
