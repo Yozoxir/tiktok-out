@@ -4,162 +4,263 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Ouvrir dans le navigateur</title>
-
 <style>
-:root{
-  --bg:#050505;
-  --fg:#ffffff;
-  --muted:rgba(255,255,255,.6);
-}
+  :root{
+    --bg:#070707;
+    --fg:#ffffff;
+    --muted:rgba(255,255,255,.65);
 
-html,body{height:100%}
-body{
-  margin:0;
-  background:
-    radial-gradient(circle at top right, rgba(255,255,255,.12), transparent 45%),
-    var(--bg);
-  color:var(--fg);
-  font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-  overflow:hidden;
-}
+    /* Ajuste si besoin selon l’iPhone (encoche) */
+    --topOffset: calc(14px + env(safe-area-inset-top));
+    --rightOffset: calc(14px + env(safe-area-inset-right));
+  }
 
-/* CONTENU */
-.wrap{
-  max-width:520px;
-  padding:28px;
-}
+  html,body{height:100%}
+  body{
+    margin:0;
+    background: var(--bg);
+    color:var(--fg);
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+  }
 
-h1{
-  font-size:26px;
-  margin-bottom:42px;
-  font-weight:900;
-  letter-spacing:.3px;
-}
+  /* Petit dégradé discret pour faire “premium” */
+  .bgGlow{
+    position:fixed; inset:-40%;
+    background: radial-gradient(circle at 85% 10%, rgba(255,255,255,.10), transparent 35%),
+                radial-gradient(circle at 50% 55%, rgba(255,255,255,.06), transparent 45%);
+    pointer-events:none;
+    filter: blur(0px);
+  }
 
-.step{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:14px;
-  font-size:18px;
-  margin:22px 0;
-}
+  .wrap{
+    width:min(520px,92vw);
+    padding:26px;
+  }
+  h1{
+    margin:0 0 36px;
+    font-size:26px;
+    font-weight:900;
+    letter-spacing:.2px;
+    line-height:1.2;
+  }
+  .step{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:14px;
+    font-size:18px;
+    margin:22px 0;
+  }
+  .num{
+    width:36px;height:36px;
+    border:2px solid var(--fg);
+    border-radius:999px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:900;
+  }
+  .action{
+    font-weight:900;
+    text-decoration:underline;
+    text-underline-offset: 4px;
+  }
+  .footer{
+    position:fixed;
+    bottom:18px;
+    width:100%;
+    font-size:12px;
+    color:var(--muted);
+    letter-spacing:.2px;
+  }
 
-.num{
-  width:36px;height:36px;
-  border:2px solid var(--fg);
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:900;
-}
+  /* ====== GUIDE EN HAUT DROITE ====== */
+  .guide{
+    position:fixed;
+    top: var(--topOffset);
+    right: var(--rightOffset);
+    width:96px;
+    height:78px;
+    pointer-events:none;
+  }
 
-.action{
-  font-weight:900;
-  text-decoration:underline;
-}
+  /* Spotlight (halo) qui attire l'œil */
+  .spot{
+    position:absolute;
+    inset:-18px -18px -18px -18px;
+    border-radius:18px;
+    background: radial-gradient(circle at 70% 30%, rgba(255,255,255,.18), rgba(255,255,255,0) 55%);
+    filter: blur(0px);
+    animation: spotPulse 1.25s ease-in-out infinite;
+  }
+  @keyframes spotPulse{
+    0%,100%{opacity:.55; transform:scale(1)}
+    50%{opacity:1; transform:scale(1.03)}
+  }
 
-/* FLÈCHE */
-.arrow{
-  position:fixed;
-  top:56px;
-  right:56px;
-  width:160px;
-  height:160px;
-  animation:float 1.2s ease-in-out infinite;
-  filter: drop-shadow(0 10px 25px rgba(0,0,0,.7));
-}
+  /* Faux “…” (3 points) SUPER visible */
+  .menuIcon{
+    position:absolute;
+    top:8px;
+    right:8px;
+    width:44px;
+    height:26px;
+    border-radius:14px;
+    border:1px solid rgba(255,255,255,.18);
+    background: rgba(255,255,255,.06);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:7px;
+    animation: iconPop 1.25s ease-in-out infinite;
+    transform-origin: 80% 20%;
+  }
+  @keyframes iconPop{
+    0%,100%{transform:scale(1); background:rgba(255,255,255,.06)}
+    50%{transform:scale(1.10); background:rgba(255,255,255,.10)}
+  }
+  .dot{
+    width:6px;height:6px;border-radius:999px;background:#fff;
+    box-shadow: 0 0 0 0 rgba(255,255,255,.35);
+    animation: dotPulse 1.25s ease-in-out infinite;
+  }
+  .dot:nth-child(2){animation-delay:.10s}
+  .dot:nth-child(3){animation-delay:.20s}
+  @keyframes dotPulse{
+    0%,100%{transform:scale(1); opacity:.95; box-shadow:0 0 0 0 rgba(255,255,255,.0)}
+    50%{transform:scale(1.35); opacity:1; box-shadow:0 0 0 10px rgba(255,255,255,.12)}
+  }
 
-@keyframes float{
-  0%,100%{transform:translate(0,0)}
-  50%{transform:translate(-8px,8px)}
-}
+  /* Anneau de focus autour du menu */
+  .ring{
+    position:absolute;
+    top:-2px;
+    right:-2px;
+    width:60px;
+    height:44px;
+    border-radius:18px;
+    border:2px solid rgba(255,255,255,.9);
+    opacity:.0;
+    animation: ring 1.25s ease-in-out infinite;
+  }
+  @keyframes ring{
+    0%{transform:scale(.92); opacity:.0}
+    25%{opacity:.9}
+    55%{transform:scale(1.05); opacity:.55}
+    100%{transform:scale(1.12); opacity:0}
+  }
 
-/* POINT QUI PULSE SUR LE MENU */
-.dot{
-  position:fixed;
-  top:18px;
-  right:18px;
-  width:14px;height:14px;
-  border-radius:50%;
-  background:white;
-  box-shadow:0 0 0 0 rgba(255,255,255,.4);
-  animation:pulse 1.4s infinite;
-}
+  /* ====== FLÈCHE “QUI SE DESSINE” + REBOND ====== */
+  .arrow{
+    position:fixed;
+    /* part du centre droit vers le coin haut droit */
+    top: calc(var(--topOffset) + 56px);
+    right: calc(var(--rightOffset) + 56px);
+    width:220px;
+    height:220px;
+    pointer-events:none;
+    filter: drop-shadow(0 14px 28px rgba(0,0,0,.65));
+    animation: arrowFloat 1.1s ease-in-out infinite;
+  }
+  @keyframes arrowFloat{
+    0%,100%{transform:translate(0,0)}
+    50%{transform:translate(-10px,10px)}
+  }
+  .arrow path{
+    fill:none;
+    stroke:#fff;
+    stroke-width:10;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+    stroke-dasharray: 420;
+    stroke-dashoffset: 420;
+    animation: draw 1.25s ease-in-out infinite;
+    opacity:.96;
+  }
+  @keyframes draw{
+    0%{stroke-dashoffset:420; opacity:.2}
+    40%{opacity:1}
+    70%{stroke-dashoffset:0; opacity:1}
+    100%{stroke-dashoffset:-60; opacity:.0}
+  }
 
-@keyframes pulse{
-  0%{box-shadow:0 0 0 0 rgba(255,255,255,.4)}
-  70%{box-shadow:0 0 0 18px rgba(255,255,255,0)}
-  100%{box-shadow:0 0 0 0 rgba(255,255,255,0)}
-}
-
-.footer{
-  position:fixed;
-  bottom:18px;
-  width:100%;
-  font-size:12px;
-  color:var(--muted);
-}
+  /* Label minimal */
+  .label{
+    position:fixed;
+    top: calc(var(--topOffset) + 90px);
+    right: calc(var(--rightOffset) + 16px);
+    background: rgba(255,255,255,.07);
+    border:1px solid rgba(255,255,255,.14);
+    border-radius:16px;
+    padding:10px 12px;
+    font-size:13px;
+    color:#fff;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    pointer-events:none;
+  }
 </style>
 </head>
 
 <body>
+  <div class="bgGlow"></div>
 
-<!-- POINT MENU -->
-<div class="dot"></div>
+  <!-- Flèche dessinée -->
+  <svg class="arrow" viewBox="0 0 240 240" aria-hidden="true">
+    <!-- courbe -->
+    <path d="M20 210 C95 170, 125 140, 175 70" />
+    <!-- pointe -->
+    <path d="M170 74 L215 58 L195 105" />
+  </svg>
 
-<!-- FLÈCHE SVG -->
-<svg class="arrow" viewBox="0 0 200 200">
-  <path d="M30 170 C90 130, 120 100, 160 40"
-        fill="none"
-        stroke="white"
-        stroke-width="10"
-        stroke-linecap="round"/>
-  <path d="M155 45 L185 30 L170 75"
-        fill="none"
-        stroke="white"
-        stroke-width="10"
-        stroke-linecap="round"
-        stroke-linejoin="round"/>
-</svg>
-
-<div class="wrap">
-  <h1>Pour accéder au lien</h1>
-
-  <div class="step">
-    <div class="num">1</div>
-    <div>Clique sur <b>•••</b> en haut à droite</div>
+  <!-- Focus haut droit -->
+  <div class="guide" aria-hidden="true">
+    <div class="spot"></div>
+    <div class="ring"></div>
+    <div class="menuIcon">
+      <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+    </div>
   </div>
 
-  <div class="step">
-    <div class="num">2</div>
-    <div>Puis <span class="action">Ouvrir dans le navigateur</span></div>
-  </div>
-</div>
+  <!-- Texte minimal -->
+  <div class="wrap">
+    <h1>Pour accéder au lien</h1>
 
-<div class="footer">
-  Safari ou Chrome
-</div>
+    <div class="step">
+      <div class="num">1</div>
+      <div>Clique sur <b>•••</b> en haut à droite</div>
+    </div>
+
+    <div class="step">
+      <div class="num">2</div>
+      <div>Puis <span class="action">Ouvrir dans le navigateur</span></div>
+    </div>
+  </div>
+
+  <div class="footer">Safari ou Chrome</div>
 
 <script>
-const DEST = "https://antoressel.com";
+  // 👉 Mets ton lien final ici
+  const DEST = "https://antoressel.com";
 
-const ua = navigator.userAgent.toLowerCase();
-const isTikTok =
-  ua.includes("tiktok") ||
-  ua.includes("bytedance") ||
-  ua.includes("musical.ly") ||
-  ua.includes("aweme");
+  // TikTok detection (simple + efficace)
+  const ua = (navigator.userAgent || "").toLowerCase();
+  const isTikTok =
+    ua.includes("tiktok") ||
+    ua.includes("bytedance") ||
+    ua.includes("musical.ly") ||
+    ua.includes("aweme") ||
+    ua.includes("ttwebview");
 
-if(!isTikTok){
-  location.replace(DEST);
-}
+  // Si pas TikTok => redirection directe (conversion max)
+  if(!isTikTok){
+    location.replace(DEST);
+  }
 </script>
-
 </body>
 </html>
