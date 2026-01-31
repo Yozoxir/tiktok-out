@@ -5,98 +5,231 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Ouvrir dans le navigateur</title>
   <style>
-    body{
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      margin:0;
-      padding:22px;
-      line-height:1.4;
-      background:#fafafa;
-    }
-    .card{
-      max-width:560px;
-      margin:0 auto;
-      padding:20px;
-      border:1px solid #ddd;
-      border-radius:16px;
-      background:#fff;
-      box-shadow:0 2px 6px rgba(0,0,0,0.05);
-    }
-    h1{font-size:20px;margin-top:0}
-    p{font-size:16px}
-    .btn{
-      display:block;
-      width:100%;
-      padding:14px 16px;
-      border-radius:12px;
-      border:0;
-      font-size:16px;
-      text-align:center;
-      text-decoration:none;
-      cursor:pointer;
-      margin-top:10px;
-    }
+    body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;margin:0;padding:22px;line-height:1.45;background:#fafafa}
+    .card{max-width:620px;margin:0 auto;padding:22px;border:1px solid #ddd;border-radius:18px;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+    h1{font-size:20px;margin:0 0 10px}
+    p{font-size:16px;margin:10px 0}
+    .btn{display:block;width:100%;padding:14px 16px;border-radius:12px;border:0;font-size:16px;text-align:center;text-decoration:none;margin-top:10px;cursor:pointer}
     .primary{background:#111;color:#fff}
     .secondary{background:#eee;color:#111}
-    .hint{
-      color:#555;
-      font-size:14px;
-      margin-top:14px;
-    }
-    code{
-      background:#f2f2f2;
-      padding:2px 6px;
-      border-radius:6px;
-    }
+    .danger{background:#ffe8e8;color:#7a1111}
+    .hint{color:#555;font-size:14px;margin-top:14px}
+    code{background:#f2f2f2;padding:2px 6px;border-radius:6px}
+    .small{font-size:13px;color:#666}
+    .row{display:flex;gap:10px;margin-top:10px}
+    .row > *{flex:1}
+    @media (max-width:520px){.row{flex-direction:column}}
   </style>
 </head>
 <body>
-
   <div class="card" id="card" style="display:none">
-    <h1>Pour payer, ouvre dans Safari / Chrome</h1>
-    <p>
-      Le navigateur intégré de TikTok bloque parfois PayPal.
-      Pour que le paiement fonctionne, ouvre ce lien dans ton navigateur.
-    </p>
+    <h1>Ouvre dans Safari / Chrome pour éviter les blocages</h1>
+    <p>Les navigateurs intégrés (TikTok/Instagram/Facebook…) bloquent parfois PayPal ou les paiements. Ouvre le lien dans ton navigateur.</p>
 
-    <a class="btn primary" id="openBtn" href="#">Ouvrir le lien</a>
-    <a class="btn secondary" id="continueBtn" href="#">Continuer quand même</a>
+    <a class="btn primary" id="openBtn" href="#" rel="noopener">Ouvrir le lien (recommandé)</a>
+
+    <div class="row">
+      <button class="btn secondary" id="copyBtn" type="button">Copier le lien</button>
+      <a class="btn secondary" id="continueBtn" href="#" rel="noopener">Continuer quand même</a>
+    </div>
 
     <p class="hint" id="hint"></p>
+    <p class="small" id="subhint"></p>
+
+    <p class="hint" id="debug" style="display:none"></p>
   </div>
 
   <script>
-    // 👉 TON lien Beacons
+    // ✅ Destination finale
     const DEST = "https://antoressel.com";
 
-    const ua = navigator.userAgent.toLowerCase();
-    const isTikTok = ua.includes("tiktok") || ua.includes("musical.ly");
-    const isInstagram = ua.includes("instagram");
-    const isFacebook = ua.includes("fbav") || ua.includes("fban");
-    const isInApp = isTikTok || isInstagram || isFacebook;
+    // Options URL:
+    // ?force=1 => force l'affichage de la page
+    // ?debug=1 => affiche les infos de debug
+    const params = new URLSearchParams(location.search);
+    const FORCE = params.get("force") === "1";
+    const DEBUG = params.get("debug") === "1";
 
-    // Si on n'est PAS dans un navigateur intégré → redirection directe
-    if (!isInApp) {
-      window.location.replace(DEST);
-    } else {
-      // Sinon, on affiche la page d'instructions
-      document.getElementById("card").style.display = "block";
+    const uaRaw = navigator.userAgent || "";
+    const ua = uaRaw.toLowerCase();
 
+    const isIOS = /iphone|ipad|ipod/i.test(uaRaw);
+    const isAndroid = /android/i.test(uaRaw);
+
+    // Détection large in-app browsers
+    // (volontairement redondante : certaines apps changent l’UA selon versions)
+    const inAppSignals = [
+      // Meta / IG
+      "instagram","fbav","fban","fbios","fb_iab","fb4a","facebook",
+      // TikTok / ByteDance
+      "tiktok","musical.ly","bytedance","ttwebview","aweme",
+      // Snap / Pinterest / Line
+      "snapchat","pinterest","line/",
+      // Others common in-app
+      "twitter","x.com","linkedinapp","reddit","telegram","whatsapp",
+      "messenger","wechat","micromessenger",
+      // Generic webview markers
+      "wv","webview"
+    ];
+
+    const isInApp = inAppSignals.some(s => ua.includes(s));
+
+    // Heuristique iOS WebView:
+    // iOS Safari contient généralement "safari" (sauf Chrome iOS: "crios", Firefox iOS: "fxios")
+    const looksLikeWebViewIOS =
+      isIOS &&
+      !ua.includes("safari") &&
+      !ua.includes("crios") &&
+      !ua.includes("fxios") &&
+      !ua.includes("opios");
+
+    // Heuristique Android WebView:
+    // "wv" ou "; wv" + absence de "chrome/" peut indiquer webview.
+    const looksLikeWebViewAndroid =
+      isAndroid && (ua.includes(" wv") || ua.includes("; wv") || ua.includes("version/")) && ua.includes("chrome/");
+
+    const mobile = isIOS || isAndroid;
+
+    // Referrer vide sur mobile + webview iOS => souvent un in-app
+    const refEmpty = !document.referrer;
+
+    // Décision "gate"
+    const shouldShowGate = FORCE || isInApp || looksLikeWebViewIOS || looksLikeWebViewAndroid || (mobile && refEmpty && (looksLikeWebViewIOS));
+
+    // --- Utils ---
+    function escapeHtml(s){return String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");}
+
+    function setLinks(){
       document.getElementById("openBtn").href = DEST;
       document.getElementById("continueBtn").href = DEST;
+    }
 
-      const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-      const isAndroid = /android/i.test(navigator.userAgent);
-      const hint = document.getElementById("hint");
+    async function copyText(text){
+      // Clipboard API
+      try{
+        if(navigator.clipboard && window.isSecureContext){
+          await navigator.clipboard.writeText(text);
+          return true;
+        }
+      }catch(e){}
 
-      if (isTikTok && isIOS) {
-        hint.innerHTML = 'Sur iPhone : touche <code>…</code> en haut puis <b>Ouvrir dans Safari</b>.';
-      } else if (isTikTok && isAndroid) {
-        hint.innerHTML = 'Sur Android : touche <code>…</code> puis <b>Ouvrir dans le navigateur</b> ou <b>Chrome</b>.';
-      } else {
-        hint.innerHTML = 'Touche <code>…</code> puis <b>Ouvrir dans le navigateur</b>.';
+      // Fallback execCommand
+      try{
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.setAttribute("readonly","");
+        ta.style.position = "fixed";
+        ta.style.top = "-9999px";
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        const ok = document.execCommand("copy");
+        document.body.removeChild(ta);
+        return ok;
+      }catch(e){
+        return false;
       }
     }
-  </script>
 
+    // Tentative agressive d'ouverture externe (surtout Android).
+    // Sur iOS, Apple bloque souvent si pas “user gesture”.
+    function tryOpenExternal(){
+      // 1) tentative window.open (peut être bloquée en in-app)
+      let opened = false;
+      try{
+        const w = window.open(DEST, "_blank", "noopener,noreferrer");
+        opened = !!w;
+      }catch(e){}
+
+      // 2) fallback location.href (si window.open bloqué)
+      // (ne pas utiliser replace ici, on veut garder un retour possible)
+      if(!opened){
+        try{ location.href = DEST; }catch(e){}
+      }
+    }
+
+    // Android: tentative "intent://" pour forcer Chrome (quand supporté)
+    function androidIntentUrl(httpUrl){
+      // Convertit https://example.com/path?x=1 => intent://example.com/path?x=1#Intent;scheme=https;package=com.android.chrome;end
+      try{
+        const u = new URL(httpUrl);
+        const hostAndPath = u.host + u.pathname;
+        const qs = u.search || "";
+        return "intent://" + hostAndPath + qs + "#Intent;scheme=" + u.protocol.replace(":","") + ";package=com.android.chrome;end";
+      }catch(e){
+        return null;
+      }
+    }
+
+    function showGate(){
+      const card = document.getElementById("card");
+      card.style.display = "block";
+      setLinks();
+
+      const hint = document.getElementById("hint");
+      const subhint = document.getElementById("subhint");
+
+      if(isIOS){
+        hint.innerHTML = 'Sur iPhone : touche <code>…</code> puis <b>Ouvrir dans Safari</b>.';
+        subhint.textContent = "Si ça ne marche pas, copie le lien puis colle-le dans Safari.";
+      }else if(isAndroid){
+        hint.innerHTML = 'Sur Android : touche <code>…</code> puis <b>Ouvrir dans le navigateur</b> / <b>Chrome</b>.';
+        subhint.textContent = "Astuce : le bouton “Ouvrir” tente aussi de forcer Chrome automatiquement sur certains Android.";
+      }else{
+        hint.innerHTML = 'Ouvre ce lien dans ton navigateur.';
+        subhint.textContent = "";
+      }
+
+      // Bouton ouvrir : “max power”
+      document.getElementById("openBtn").addEventListener("click", (e)=>{
+        e.preventDefault();
+
+        // Android intent d'abord (souvent le plus efficace)
+        if(isAndroid){
+          const intent = androidIntentUrl(DEST);
+          if(intent){
+            // tentative intent
+            try{ location.href = intent; }catch(err){}
+            // fallback normal après petit délai
+            setTimeout(()=>{ tryOpenExternal(); }, 350);
+            return;
+          }
+        }
+
+        // iOS & autres
+        tryOpenExternal();
+      });
+
+      // Copier
+      const copyBtn = document.getElementById("copyBtn");
+      copyBtn.addEventListener("click", async ()=>{
+        const ok = await copyText(DEST);
+        copyBtn.textContent = ok ? "Lien copié ✅" : "Impossible de copier ❌";
+        setTimeout(()=>copyBtn.textContent="Copier le lien", 1600);
+      });
+
+      // Debug
+      if(DEBUG){
+        const d = document.getElementById("debug");
+        d.style.display = "block";
+        d.innerHTML =
+          "<b>Debug</b><br>" +
+          "UA: <code>" + escapeHtml(uaRaw) + "</code><br>" +
+          "isIOS: <code>" + isIOS + "</code> | isAndroid: <code>" + isAndroid + "</code><br>" +
+          "isInApp: <code>" + isInApp + "</code><br>" +
+          "looksLikeWebViewIOS: <code>" + looksLikeWebViewIOS + "</code><br>" +
+          "looksLikeWebViewAndroid: <code>" + looksLikeWebViewAndroid + "</code><br>" +
+          "referrerEmpty: <code>" + refEmpty + "</code><br>" +
+          "shouldShowGate: <code>" + shouldShowGate + "</code><br>";
+      }
+    }
+
+    if(shouldShowGate){
+      showGate();
+    }else{
+      // Redirection directe si on pense être dans un vrai navigateur
+      location.replace(DEST);
+    }
+  </script>
 </body>
 </html>
