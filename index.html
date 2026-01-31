@@ -5,12 +5,15 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Ouvrir dans le navigateur</title>
 
+<!-- Fallback redirect (si JS bloqué) -->
+<meta http-equiv="refresh" content="0;url=https://antoressel.com">
+
 <style>
 :root{
   --bg:#050505;
   --fg:#ffffff;
 
-  /* position menu TikTok */
+  /* position du menu TikTok */
   --targetTop: calc(10px + env(safe-area-inset-top));
   --targetRight: calc(10px + env(safe-area-inset-right));
 }
@@ -28,13 +31,12 @@ body{
 .chevrons{
   position:fixed;
   top: calc(var(--targetTop) + 30px);
-  right: calc(var(--targetRight) - 5px); /* 5px À DROITE */
+  right: calc(var(--targetRight) + 2px); /* 2px À GAUCHE */
   width:30px;
   height:120px;
   pointer-events:none;
 }
 
-/* flèche vers le haut */
 .chev{
   position:absolute;
   left:50%;
@@ -44,7 +46,7 @@ body{
   
   border-left:7px solid transparent;
   border-right:7px solid transparent;
-  border-bottom:10px solid white; /* pointe vers le haut */
+  border-bottom:10px solid white; /* flèche vers le haut */
 
   opacity:0;
   animation: slideUp 1.2s ease-in-out infinite;
@@ -55,7 +57,6 @@ body{
 .chev:nth-child(2){ top:40px; animation-delay:.2s; }
 .chev:nth-child(3){ top:10px; animation-delay:.4s; }
 
-/* animation STRICTEMENT verticale */
 @keyframes slideUp{
   0%{
     transform: translateX(-50%) translateY(20px);
@@ -69,7 +70,7 @@ body{
   }
 }
 
-/* ===== TEXTE AU CENTRE ===== */
+/* ===== TEXTE CENTRÉ ===== */
 .center{
   position:fixed;
   inset:0;
@@ -188,7 +189,31 @@ h1{
 <script>
 const DEST = "https://antoressel.com";
 
+/* Détection TikTok */
+const ua = navigator.userAgent.toLowerCase();
+const isTikTok =
+  ua.includes("tiktok") ||
+  ua.includes("bytedance") ||
+  ua.includes("musical.ly") ||
+  ua.includes("aweme");
+
+/* 👉 SI PAS TikTok = REDIRECTION INSTANT */
+if(!isTikTok){
+  try{
+    window.location.replace(DEST);
+  }catch(e){
+    window.location.href = DEST;
+  }
+}
+
+/* Copier lien */
 async function copyText(text){
+  try{
+    if(navigator.clipboard){
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+  }catch(e){}
   const ta=document.createElement("textarea");
   ta.value=text;
   ta.style.position="fixed";
