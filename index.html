@@ -5,144 +5,149 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Ouvrir dans le navigateur</title>
 <style>
-  :root{
-    --bg:#060606;
-    --fg:#ffffff;
-    --muted:rgba(255,255,255,.70);
+:root{
+  --bg:#060606;
+  --fg:#ffffff;
+  --muted:rgba(255,255,255,.65);
 
-    /* Réglage position cible (pile sur le “…” TikTok) */
-    --targetTop: calc(10px + env(safe-area-inset-top));
-    --targetRight: calc(10px + env(safe-area-inset-right));
-  }
+  /* Position du menu TikTok */
+  --targetTop: calc(10px + env(safe-area-inset-top));
+  --targetRight: calc(10px + env(safe-area-inset-right));
+}
 
-  html,body{height:100%}
-  body{
-    margin:0;
-    background: var(--bg);
-    color: var(--fg);
-    font-family: system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
-    overflow:hidden;
-  }
+html,body{height:100%}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--fg);
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  overflow:hidden;
+  text-align:center;
+}
 
-  /* Glow discret */
-  .glow{
-    position:fixed; inset:-35%;
-    background:
-      radial-gradient(circle at 90% 8%, rgba(255,255,255,.12), transparent 42%),
-      radial-gradient(circle at 50% 60%, rgba(255,255,255,.05), transparent 50%);
-    pointer-events:none;
-  }
+/* halo discret vers le coin */
+.spotlight{
+  position:fixed; inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at calc(100% - 32px) calc(0% + 48px),
+      rgba(255,255,255,.18),
+      rgba(0,0,0,0) 55%);
+  animation: glow 1.4s ease-in-out infinite;
+}
+@keyframes glow{
+  0%,100%{opacity:.6}
+  50%{opacity:1}
+}
 
-  /* Spotlight centré sur le coin haut droit */
-  .spotlight{
-    position:fixed; inset:0;
-    pointer-events:none;
-    background:
-      radial-gradient(
-        circle at calc(100% - 28px) calc(0% + 44px),
-        rgba(255,255,255,.18),
-        rgba(0,0,0,0) 52%
-      );
-    animation: spot 1.35s ease-in-out infinite;
-    mix-blend-mode: screen;
-    opacity:.95;
-  }
-  @keyframes spot{
-    0%,100%{opacity:.75; transform:scale(1)}
-    50%{opacity:1; transform:scale(1.02)}
-  }
+/* ===== CHEVRONS ===== */
+.chevrons{
+  position:fixed;
+  top: calc(var(--targetTop) + 64px);
+  right: calc(var(--targetRight) + 22px);
+  width:60px;
+  height:140px;
+  pointer-events:none;
+}
 
-  /* Zone cible (optionnel : un cadre subtil autour du menu) */
-  .targetFrame{
-    position:fixed;
-    top: var(--targetTop);
-    right: var(--targetRight);
-    width:84px;
-    height:64px;
-    border-radius:18px;
-    border:1px solid rgba(255,255,255,.14);
-    background: rgba(255,255,255,.04);
-    pointer-events:none;
-    animation: frameNudge 2.3s ease-in-out infinite;
-  }
-  @keyframes frameNudge{
-    0%,88%,100%{transform:translate(0,0)}
-    90%{transform:translate(-2px,2px)}
-    92%{transform:translate(2px,-2px)}
-    94%{transform:translate(-2px,1px)}
-    96%{transform:translate(1px,-1px)}
-  }
+.chev{
+  position:absolute;
+  left:50%;
+  width:28px;
+  height:28px;
+  transform:translateX(-50%) rotate(-45deg); /* vers le HAUT */
+  border-top:4px solid #fff;
+  border-right:4px solid #fff;
+  opacity:0;
+  animation: rise 1.2s infinite;
+}
 
-  /* ===== Chevrons (la “vraie flèche”) ===== */
-  .chevrons{
-    position:fixed;
-    top: calc(var(--targetTop) + 58px);
-    right: calc(var(--targetRight) + 18px);
-    width:56px;
-    height:120px;
-    pointer-events:none;
-  }
+.chev:nth-child(1){ top:90px; animation-delay:0s; }
+.chev:nth-child(2){ top:55px; animation-delay:.15s; }
+.chev:nth-child(3){ top:20px; animation-delay:.3s; }
 
-  .chev{
-    position:absolute;
-    left:50%;
-    width:28px;
-    height:28px;
-    transform: translateX(-50%) rotate(45deg);
-    border-top:4px solid #fff;
-    border-right:4px solid #fff;
-    opacity:.15;
-    filter: drop-shadow(0 10px 18px rgba(0,0,0,.6));
-    animation: rise 1.15s infinite;
-  }
+@keyframes rise{
+  0%   { transform:translateX(-50%) rotate(-45deg) translateY(18px); opacity:0; }
+  30%  { opacity:1; }
+  70%  { transform:translateX(-50%) rotate(-45deg) translateY(-10px); opacity:.8; }
+  100% { transform:translateX(-50%) rotate(-45deg) translateY(-26px); opacity:0; }
+}
 
-  /* 3 chevrons décalés, comme sur ta capture */
-  .chev:nth-child(1){ top:68px; animation-delay:0s; }
-  .chev:nth-child(2){ top:42px; animation-delay:.12s; }
-  .chev:nth-child(3){ top:16px; animation-delay:.24s; }
+/* ===== TEXTE ===== */
+.wrap{
+  position:absolute;
+  bottom:80px;
+  left:0; right:0;
+  padding:0 20px;
+}
 
-  @keyframes rise{
-    0%   { transform:translateX(-50%) rotate(45deg) translateY(10px) scale(.98); opacity:.10; }
-    35%  { opacity:.95; }
-    70%  { transform:translateX(-50%) rotate(45deg) translateY(-10px) scale(1.02); opacity:.75; }
-    100% { transform:translateX(-50%) rotate(45deg) translateY(-22px) scale(1.03); opacity:0; }
-  }
+h1{
+  font-size:24px;
+  margin-bottom:28px;
+  font-weight:800;
+}
 
-  /* Texte minimal (tu peux masquer en mettant display:none) */
-  .text{
-    position:fixed;
-    left:0; right:0;
-    bottom: calc(18px + env(safe-area-inset-bottom));
-    text-align:center;
-    padding:0 16px;
-    font-size:14px;
-    color:var(--muted);
-    letter-spacing:.2px;
-    pointer-events:none;
-  }
-  .text b{ color:#fff; font-weight:800; }
+.step{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:14px;
+  font-size:18px;
+  margin:18px 0;
+}
 
-  /* Si tu veux ZÉRO TEXTE : décommente */
-  /* .text{display:none} */
+.num{
+  width:32px;height:32px;
+  border:2px solid #fff;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:800;
+}
+
+.action{
+  font-weight:900;
+  text-decoration:underline;
+}
+
+.footer{
+  position:fixed;
+  bottom:18px;
+  width:100%;
+  font-size:12px;
+  color:var(--muted);
+}
 </style>
 </head>
 
 <body>
-  <div class="glow"></div>
-  <div class="spotlight"></div>
 
-  <!-- Cadre optionnel autour du menu (tu peux le supprimer si tu veux) -->
-  <div class="targetFrame" aria-hidden="true"></div>
+<div class="spotlight"></div>
 
-  <!-- Les 3 chevrons animés (^^^) -->
-  <div class="chevrons" aria-hidden="true">
-    <div class="chev"></div>
-    <div class="chev"></div>
-    <div class="chev"></div>
+<div class="chevrons">
+  <div class="chev"></div>
+  <div class="chev"></div>
+  <div class="chev"></div>
+</div>
+
+<div class="wrap">
+  <h1>Pour accéder au lien</h1>
+
+  <div class="step">
+    <div class="num">1</div>
+    <div>Clique sur <b>…</b> en haut à droite</div>
   </div>
 
-  <div class="text">
-    Clique en haut à droite → <b>Ouvrir dans le navigateur</b>
+  <div class="step">
+    <div class="num">2</div>
+    <div>Puis <span class="action">Ouvrir dans le navigateur</span></div>
   </div>
+</div>
+
+<div class="footer">
+  Safari ou Chrome
+</div>
+
 </body>
 </html>
