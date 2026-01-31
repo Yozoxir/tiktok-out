@@ -24,39 +24,52 @@ body{
   overflow:hidden;
 }
 
-/* ===== FLÈCHES VERTICALES ===== */
+/* ===== FLÈCHES VERTICALES (NOUVELLE TÊTE) ===== */
 .chevrons{
   position:fixed;
   top: calc(var(--targetTop) + 30px);
-  right: calc(var(--targetRight) + 1px); /* 1px À GAUCHE */
-  width:30px;
-  height:120px;
+  right: calc(var(--targetRight) + 1px); /* 1px à gauche */
+  width:40px;
+  height:140px;
   pointer-events:none;
 }
 
 .chev{
   position:absolute;
   left:50%;
-  width:0;
-  height:0;
   transform: translateX(-50%);
-  border-left:7px solid transparent;
-  border-right:7px solid transparent;
-  border-bottom:10px solid white; /* flèche vers le haut */
+  width:6px;
+  height:22px;
+  background:white; /* corps de la flèche */
   opacity:0;
   animation: slideUp 1.2s ease-in-out infinite;
 }
 
-/* 3 flèches empilées */
-.chev:nth-child(1){ top:70px; animation-delay:0s; }
-.chev:nth-child(2){ top:40px; animation-delay:.2s; }
-.chev:nth-child(3){ top:10px; animation-delay:.4s; }
+/* pointe */
+.chev::after{
+  content:"";
+  position:absolute;
+  bottom:100%;
+  left:50%;
+  transform:translateX(-50%);
+  width:0;
+  height:0;
+  border-left:12px solid transparent;
+  border-right:12px solid transparent;
+  border-bottom:16px solid white; /* pointe vers le haut */
+}
 
+/* 3 flèches empilées */
+.chev:nth-child(1){ top:90px; animation-delay:0s; }
+.chev:nth-child(2){ top:55px; animation-delay:.2s; }
+.chev:nth-child(3){ top:20px; animation-delay:.4s; }
+
+/* animation STRICTEMENT verticale */
 @keyframes slideUp{
-  0%{ transform: translateX(-50%) translateY(20px); opacity:0; }
+  0%{ transform:translateX(-50%) translateY(25px); opacity:0; }
   30%{ opacity:1; }
   70%{ opacity:1; }
-  100%{ transform: translateX(-50%) translateY(-20px); opacity:0; }
+  100%{ transform:translateX(-50%) translateY(-25px); opacity:0; }
 }
 
 /* ===== TEXTE CENTRÉ ===== */
@@ -177,7 +190,7 @@ const isTikTok =
   ua.includes("aweme") ||
   ua.includes("ttwebview");
 
-/* ✅ Redirection UNIQUEMENT hors TikTok */
+/* Redirection uniquement hors TikTok */
 if(!isTikTok){
   window.location.replace(DEST);
 }
