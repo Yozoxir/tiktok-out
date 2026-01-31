@@ -28,7 +28,7 @@ body{
 .chevrons{
   position:fixed;
   top: calc(var(--targetTop) + 30px);
-  right: calc(var(--targetRight) + 2px); /* 2px à gauche */
+  right: calc(var(--targetRight) + 1px); /* 1px À GAUCHE */
   width:30px;
   height:120px;
   pointer-events:none;
@@ -40,11 +40,9 @@ body{
   width:0;
   height:0;
   transform: translateX(-50%);
-  
   border-left:7px solid transparent;
   border-right:7px solid transparent;
   border-bottom:10px solid white; /* flèche vers le haut */
-
   opacity:0;
   animation: slideUp 1.2s ease-in-out infinite;
 }
@@ -55,16 +53,10 @@ body{
 .chev:nth-child(3){ top:10px; animation-delay:.4s; }
 
 @keyframes slideUp{
-  0%{
-    transform: translateX(-50%) translateY(20px);
-    opacity:0;
-  }
+  0%{ transform: translateX(-50%) translateY(20px); opacity:0; }
   30%{ opacity:1; }
   70%{ opacity:1; }
-  100%{
-    transform: translateX(-50%) translateY(-20px);
-    opacity:0;
-  }
+  100%{ transform: translateX(-50%) translateY(-20px); opacity:0; }
 }
 
 /* ===== TEXTE CENTRÉ ===== */
@@ -78,9 +70,7 @@ body{
   padding:0 18px;
 }
 
-.card{
-  width:min(520px,92vw);
-}
+.card{ width:min(520px,92vw); }
 
 h1{
   margin:0 0 18px;
@@ -88,10 +78,7 @@ h1{
   font-weight:900;
 }
 
-.steps{
-  display:grid;
-  gap:14px;
-}
+.steps{ display:grid; gap:14px; }
 
 .step{
   display:flex;
@@ -111,10 +98,7 @@ h1{
   font-weight:800;
 }
 
-.action{
-  font-weight:900;
-  text-decoration:underline;
-}
+.action{ font-weight:900; text-decoration:underline; }
 
 /* ===== BOUTON COPIER ===== */
 .copyWrap{
@@ -161,13 +145,11 @@ h1{
 <div class="center">
   <div class="card">
     <h1>Ouvre dans le navigateur</h1>
-
     <div class="steps">
       <div class="step">
         <div class="num">1</div>
         <div>Clique sur <b>…</b> en haut à droite</div>
       </div>
-
       <div class="step">
         <div class="num">2</div>
         <div>Puis <span class="action">Ouvrir dans le navigateur</span></div>
@@ -195,7 +177,7 @@ const isTikTok =
   ua.includes("aweme") ||
   ua.includes("ttwebview");
 
-/* ✅ REDIRECTION UNIQUEMENT SI ON N'EST PAS DANS TIKTOK */
+/* ✅ Redirection UNIQUEMENT hors TikTok */
 if(!isTikTok){
   window.location.replace(DEST);
 }
