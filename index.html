@@ -9,10 +9,9 @@
 :root{
   --bg:#050505;
   --fg:#ffffff;
-  --muted:rgba(255,255,255,.70);
-  --muted2:rgba(255,255,255,.55);
+  --muted:rgba(255,255,255,.7);
 
-  /* Coin haut droit (menu TikTok) */
+  /* position du menu TikTok */
   --targetTop: calc(10px + env(safe-area-inset-top));
   --targetRight: calc(10px + env(safe-area-inset-right));
 }
@@ -26,7 +25,7 @@ body{
   overflow:hidden;
 }
 
-/* ===== CHEVRONS (simples) ===== */
+/* ===== FLÈCHES ===== */
 .chevrons{
   position:fixed;
   top: calc(var(--targetTop) + 30px);
@@ -36,38 +35,43 @@ body{
   pointer-events:none;
 }
 
+/* flèche verticale */
 .chev{
   position:absolute;
   left:50%;
-  width:18px;
-  height:18px;
-  transform: translateX(-50%) rotate(-45deg);
+  width:14px;
+  height:14px;
+
+  /* forme ^ vers le haut */
+  transform: translateX(-50%) rotate(45deg);
+
+  border-left:3px solid #fff;
   border-top:3px solid #fff;
-  border-right:3px solid #fff;
+
   opacity:0;
-  animation: slideUp 1.2s linear infinite;
+  animation: slideUp 1.2s ease-in-out infinite;
 }
 
-/* 3 flèches décalées */
+/* 3 flèches empilées */
 .chev:nth-child(1){ top:70px; animation-delay:0s; }
 .chev:nth-child(2){ top:40px; animation-delay:.2s; }
 .chev:nth-child(3){ top:10px; animation-delay:.4s; }
 
-/* ANIMATION SIMPLE */
+/* animation VERTICALE */
 @keyframes slideUp{
   0%{
-    transform:translateX(-50%) rotate(-45deg) translateY(15px);
+    transform: translateX(-50%) rotate(45deg) translateY(20px);
     opacity:0;
   }
   30%{ opacity:1; }
   70%{ opacity:1; }
   100%{
-    transform:translateX(-50%) rotate(-45deg) translateY(-20px);
+    transform: translateX(-50%) rotate(45deg) translateY(-25px);
     opacity:0;
   }
 }
 
-/* ===== TEXTE AU MILIEU ===== */
+/* ===== TEXTE CENTRÉ ===== */
 .center{
   position:fixed;
   inset:0;
@@ -117,7 +121,7 @@ h1{
   text-decoration:underline;
 }
 
-/* ===== BOUTON COPIER EN BAS À DROITE ===== */
+/* ===== BOUTON COPIER ===== */
 .copyWrap{
   position:fixed;
   right: calc(14px + env(safe-area-inset-right));
@@ -158,7 +162,7 @@ h1{
   <div class="chev"></div>
 </div>
 
-<!-- TEXTE AU CENTRE -->
+<!-- TEXTE -->
 <div class="center">
   <div class="card">
     <h1>Ouvre dans le navigateur</h1>
@@ -177,7 +181,7 @@ h1{
   </div>
 </div>
 
-<!-- BOUTON COPIER -->
+<!-- BOUTON -->
 <div class="copyWrap">
   <button class="btn" id="copyBtn">Copier le lien</button>
 </div>
@@ -188,12 +192,6 @@ h1{
 const DEST = "https://antoressel.com";
 
 async function copyText(text){
-  try{
-    if(navigator.clipboard && window.isSecureContext){
-      await navigator.clipboard.writeText(text);
-      return true;
-    }
-  }catch(e){}
   const ta=document.createElement("textarea");
   ta.value=text;
   ta.style.position="fixed";
