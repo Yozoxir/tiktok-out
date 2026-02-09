@@ -1,5 +1,5 @@
 export default async function handler(req, res) {
-  const DEST = "https://antoresellvinted.myshopify.com/?v=999";
+  const DEST = "https://antoresellvinted.myshopify.com";
   const slug = (req.query.slug || "home").toString();
 
   const redisUrl = process.env.KV_REST_API_URL;
